@@ -2,41 +2,45 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>Agenda PrenoBooking</title>
+  <title>PrenoBooking | Agenda Online</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Reserva y confirmación de citas de psicoterapia – PrenoBooking." />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/84a691790807731b0599b8e725921c0272130a7c/favicon.png" sizes="64x64">
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/84a691790807731b0599b8e725921c0272130a7c/favicon.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
 
   <!-- Open Graph -->
   <meta property="og:title" content="PrenoBooking" />
   <meta property="og:description" content="Reserva y confirmación de citas de psicoterapia." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://prenobooking.netlify.app" />
-  <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/refs/heads/main/logo.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/logo.png" />
 
-  <link rel="preconnect" href="https://script.google.com">
+  <!-- Google Font (más profesional y liviana) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --header-h: 64px;
-      --header-bg: #f4f7f8;
-      --header-border: rgba(0,0,0,.10);
+      --header-h: 72px;
 
-      --page-bg: #eef2f4;     /* fondo neutro, similar al entorno del form */
-      --brand: #1976D2;
-      --accent: #43A047;
+      --page-bg: #f7f9fa;
+      --header-bg: #ffffff;
+      --border: rgba(0,0,0,.06);
+
+      --brand: #1F4E79;
+      --accent: #2E7D32;
+
+      --text-main: #1c1c1c;
+      --text-soft: rgba(0,0,0,.55);
     }
 
     html, body{
       height: 100%;
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--page-bg);
-      overflow: hidden; /* evita scroll en la página padre */
+      color: var(--text-main);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
     .wrap{
@@ -51,19 +55,15 @@
       align-items:center;
       justify-content:center;
       background: var(--header-bg);
-      border-bottom: 1px solid var(--header-border);
-      padding: 0 16px;
-      box-sizing: border-box;
+      border-bottom: 1px solid var(--border);
     }
 
-    header .brand-main{
-      width: clamp(180px, 22vw, 280px);
+    header img{
+      width: clamp(160px, 18vw, 240px);
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 2px 10px rgba(0,0,0,.10));
     }
 
-    /* Área del iframe: sin card, sin marco */
     .frame-area{
       position: relative;
       width: 100%;
@@ -71,72 +71,84 @@
       background: var(--page-bg);
     }
 
-    iframe#bk-frame{
+    iframe{
       width: 100%;
       height: 100%;
       border: 0;
       display: block;
-      background: transparent; /* importante: que no parezca "caja" */
+      background: transparent;
     }
 
-    /* Loader sobrio (encima del iframe) */
+    /* Loader minimal */
     .loader{
       position:absolute;
       inset: 0;
       display:grid;
       place-items:center;
-      background: rgba(238,242,244,.65);
-      backdrop-filter: blur(4px);
-      transition: opacity .2s ease;
+      background: rgba(247,249,250,.85);
+      transition: opacity .25s ease;
       z-index: 2;
     }
-    .loader.hidden{ opacity: 0; pointer-events:none; }
+
+    .loader.hidden{
+      opacity: 0;
+      pointer-events:none;
+    }
 
     .spinner{
-      width: 52px;
-      height: 52px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      border: 6px solid rgba(25,118,210,.18);
+      border: 4px solid rgba(31,78,121,.15);
       border-top-color: var(--brand);
-      animation: spin .9s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Fallback abajo (solo aparece si falla carga) */
-    .fallback{
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      display:none;
-      gap: 10px;
-      align-items:center;
-      justify-content:center;
-      padding: 12px 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      border-radius: 12px;
-      background: #fff;
-      color: rgba(0,0,0,.72);
-      font-weight: 600;
-      z-index: 3;
-      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
-    .fallback.show{ display:flex; }
+
+    /* Fallback limpio */
+    .fallback{
+      position:absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display:none;
+      gap: 14px;
+      align-items:center;
+      padding: 14px 20px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-soft);
+      box-shadow: 0 20px 40px rgba(0,0,0,.06);
+      z-index: 3;
+    }
+
+    .fallback.show{
+      display:flex;
+    }
 
     .btn{
-      display:inline-block;
-      padding: 10px 14px;
+      padding: 10px 16px;
       border-radius: 10px;
-      color:#fff;
       text-decoration:none;
-      font-weight: 800;
+      font-weight: 600;
+      font-size: 14px;
+      color: white;
       background: var(--accent);
-      box-shadow: 0 10px 22px rgba(67,160,71,.18);
-      white-space: nowrap;
+      transition: opacity .2s ease;
+    }
+
+    .btn:hover{
+      opacity: .9;
     }
 
     @media (max-width: 520px){
-      :root{ --header-h: 60px; }
+      :root{ --header-h: 64px; }
+
       .fallback{
         flex-direction: column;
         text-align: center;
@@ -149,19 +161,16 @@
   <div class="wrap">
     <header>
       <img
-        class="brand-main"
-        src="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/refs/heads/main/logo.png"
-        alt="PrenoBooking – Logo"
+        src="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/logo.png"
+        alt="PrenoBooking Logo"
         onerror="this.style.display='none'">
     </header>
 
     <div class="frame-area">
-      <!-- Loader -->
-      <div id="loader" class="loader" aria-live="polite" aria-busy="true">
-        <div class="spinner" role="progressbar" aria-label="Cargando"></div>
+      <div id="loader" class="loader">
+        <div class="spinner"></div>
       </div>
 
-      <!-- Iframe (Apps Script) -->
       <iframe
         id="bk-frame"
         title="Formulario de Reserva"
@@ -170,13 +179,14 @@
         referrerpolicy="strict-origin-when-cross-origin">
       </iframe>
 
-      <!-- Fallback -->
-      <div id="fb" class="fallback" role="status" aria-live="polite">
-        <span>No se pudo cargar aquí. Te redirigiremos automáticamente:</span>
+      <div id="fb" class="fallback">
+        <span>No se pudo cargar aquí.</span>
         <a class="btn"
            href="https://script.google.com/macros/s/AKfycbx-CwMjzFw_sXZBgZmrhNw24pZ__8gnBYp9Q5vOjyGk_DoweKcPC6dwQuAvSBlZueSF7Q/exec"
            target="_top"
-           rel="noopener noreferrer">Abrir ahora</a>
+           rel="noopener noreferrer">
+           Abrir directamente
+        </a>
       </div>
     </div>
   </div>
@@ -202,10 +212,6 @@
         hideLoader();
         goDirect();
       });
-    } else {
-      fb.classList.add('show');
-      hideLoader();
-      goDirect();
     }
 
     setTimeout(() => {
@@ -218,3 +224,4 @@
   </script>
 </body>
 </html>
+
