@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Agenda F.Reyes</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Reserva y confirmación de citas de psicoterapia – PrenoBooking." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/84a691790807731b0599b8e725921c0272130a7c/favicon.png" sizes="64x64">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/84a691790807731b0599b8e725921c0272130a7c/favicon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PrenoBooking" />
+  <meta property="og:description" content="Reserva y confirmación de citas de psicoterapia." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://prenobooking.netlify.app" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/refs/heads/main/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://script.google.com">
+
+  <style>
+    :root{
+      --header-h: 64px;
+      --header-bg: #f4f7f8;
+      --header-border: rgba(0,0,0,.10);
+
+      --page-bg: #eef2f4;     /* fondo neutro, similar al entorno del form */
+      --brand: #1976D2;
+      --accent: #43A047;
+    }
+
+    html, body{
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial, sans-serif;
+      background: var(--page-bg);
+      overflow: hidden; /* evita scroll en la página padre */
+    }
+
+    .wrap{
+      height: 100svh;
+      display: grid;
+      grid-template-rows: var(--header-h) 1fr;
+    }
+
+    header{
+      height: var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
+
+    header .brand-main{
+      width: clamp(180px, 22vw, 280px);
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,.10));
+    }
+
+    /* Área del iframe: sin card, sin marco */
+    .frame-area{
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: var(--page-bg);
+    }
+
+    iframe#bk-frame{
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: transparent; /* importante: que no parezca "caja" */
+    }
+
+    /* Loader sobrio (encima del iframe) */
+    .loader{
+      position:absolute;
+      inset: 0;
+      display:grid;
+      place-items:center;
+      background: rgba(238,242,244,.65);
+      backdrop-filter: blur(4px);
+      transition: opacity .2s ease;
+      z-index: 2;
+    }
+    .loader.hidden{ opacity: 0; pointer-events:none; }
+
+    .spinner{
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 6px solid rgba(25,118,210,.18);
+      border-top-color: var(--brand);
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Fallback abajo (solo aparece si falla carga) */
+    .fallback{
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display:none;
+      gap: 10px;
+      align-items:center;
+      justify-content:center;
+      padding: 12px 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      background: #fff;
+      color: rgba(0,0,0,.72);
+      font-weight: 600;
+      z-index: 3;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    }
+    .fallback.show{ display:flex; }
+
+    .btn{
+      display:inline-block;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color:#fff;
+      text-decoration:none;
+      font-weight: 800;
+      background: var(--accent);
+      box-shadow: 0 10px 22px rgba(67,160,71,.18);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 520px){
+      :root{ --header-h: 60px; }
+      .fallback{
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <img
+        class="brand-main"
+        src="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/refs/heads/main/logo.png"
+        alt="PrenoBooking – Logo"
+        onerror="this.style.display='none'">
+    </header>
+
+    <div class="frame-area">
+      <!-- Loader -->
+      <div id="loader" class="loader" aria-live="polite" aria-busy="true">
+        <div class="spinner" role="progressbar" aria-label="Cargando"></div>
+      </div>
+
+      <!-- Iframe (Apps Script) -->
+      <iframe
+        id="bk-frame"
+        title="Formulario de Reserva"
+        src="https://script.google.com/macros/s/AKfycbx-CwMjzFw_sXZBgZmrhNw24pZ__8gnBYp9Q5vOjyGk_DoweKcPC6dwQuAvSBlZueSF7Q/exec?sp=ps.fernandareyes@gmail.com."
+        loading="eager"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+
+      <!-- Fallback -->
+      <div id="fb" class="fallback" role="status" aria-live="polite">
+        <span>No se pudo cargar aquí. Te redirigiremos automáticamente:</span>
+        <a class="btn"
+           href="https://script.google.com/macros/s/AKfycbx-CwMjzFw_sXZBgZmrhNw24pZ__8gnBYp9Q5vOjyGk_DoweKcPC6dwQuAvSBlZueSF7Q/exec?sp=ps.fernandareyes@gmail.com."
+           target="_top"
+           rel="noopener noreferrer">Abrir ahora</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loader = document.getElementById('loader');
+    const fb     = document.getElementById('fb');
+    const frame  = document.getElementById('bk-frame');
+
+    const hideLoader = () => loader.classList.add('hidden');
+
+    const goDirect = () => {
+      const url = frame?.src;
+      if (!url) return;
+      try { window.top.location.href = url; }
+      catch { window.location.href = url; }
+    };
+
+    if (frame) {
+      frame.addEventListener('load', hideLoader);
+      frame.addEventListener('error', () => {
+        fb.classList.add('show');
+        hideLoader();
+        goDirect();
+      });
+    } else {
+      fb.classList.add('show');
+      hideLoader();
+      goDirect();
+    }
+
+    setTimeout(() => {
+      if (!loader.classList.contains('hidden')) {
+        fb.classList.add('show');
+        hideLoader();
+        goDirect();
+      }
+    }, 6000);
+  </script>
+</body>
+</html>
