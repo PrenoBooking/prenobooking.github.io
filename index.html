@@ -1,227 +1,379 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>PrenoBooking</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Reserva y confirmación de citas de psicoterapia – PrenoBooking." />
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reserva tu Cita | PrenoBooking</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="Agenda aquí" />
-  <meta property="og:description" content="Reserva y confirmación de citas de psicoterapia." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png" />
-
-  <!-- Google Font (más profesional y liviana) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    :root{
-      --header-h: 72px;
-
-      --page-bg: #f7f9fa;
-      --header-bg: #ffffff;
-      --border: rgba(0,0,0,.06);
-
-      --brand: #1F4E79;
-      --accent: #2E7D32;
-
-      --text-main: #1c1c1c;
-      --text-soft: rgba(0,0,0,.55);
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary: #1976D2;
+      --primary-dark: #1565C0;
+      --success: #43A047;
     }
 
-    html, body{
-      height: 100%;
-      margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--page-bg);
-      color: var(--text-main);
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
     }
 
-    .wrap{
-      height: 100svh;
-      display: grid;
-      grid-template-rows: var(--header-h) 1fr;
+    .slot-btn:disabled { background: #f8fafc; color: #cbd5e1; cursor: not-allowed; border-color: #e2e8f0; }
+    .slot-btn.selected { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.02); }
+    
+    .view-transition { animation: slideIn 0.4s ease-out forwards; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Estilo para el botón de pago destacado */
+    .btn-pay-hero {
+      background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+      transition: all 0.3s ease;
     }
-
-    header{
-      height: var(--header-h);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: var(--header-bg);
-      border-bottom: 1px solid var(--border);
-    }
-
-    header img{
-      width: clamp(160px, 18vw, 240px);
-      height: auto;
-      object-fit: contain;
-    }
-
-    .frame-area{
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: var(--page-bg);
-    }
-
-    iframe{
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-      background: transparent;
-    }
-
-    /* Loader minimal */
-    .loader{
-      position:absolute;
-      inset: 0;
-      display:grid;
-      place-items:center;
-      background: rgba(247,249,250,.85);
-      transition: opacity .25s ease;
-      z-index: 2;
-    }
-
-    .loader.hidden{
-      opacity: 0;
-      pointer-events:none;
-    }
-
-    .spinner{
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 4px solid rgba(31,78,121,.15);
-      border-top-color: var(--brand);
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Fallback limpio */
-    .fallback{
-      position:absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      display:none;
-      gap: 14px;
-      align-items:center;
-      padding: 14px 20px;
-      border-radius: 14px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      font-size: 14px;
-      color: var(--text-soft);
-      box-shadow: 0 20px 40px rgba(0,0,0,.06);
-      z-index: 3;
-    }
-
-    .fallback.show{
-      display:flex;
-    }
-
-    .btn{
-      padding: 10px 16px;
-      border-radius: 10px;
-      text-decoration:none;
-      font-weight: 600;
-      font-size: 14px;
-      color: white;
-      background: var(--accent);
-      transition: opacity .2s ease;
-    }
-
-    .btn:hover{
-      opacity: .9;
-    }
-
-    @media (max-width: 520px){
-      :root{ --header-h: 64px; }
-
-      .fallback{
-        flex-direction: column;
-        text-align: center;
-      }
+    .btn-pay-hero:hover {
+      box-shadow: 0 10px 25px -5px rgba(25, 118, 210, 0.4);
+      transform: translateY(-2px);
     }
   </style>
 </head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-<body>
-  <div class="wrap">
-    <header>
-      <img
-        src="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/logo.png"
-        alt="PrenoBooking Logo"
-        onerror="this.style.display='none'">
-    </header>
+  <main class="w-full max-w-xl">
+    <!-- Card Principal -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+      
+      <!-- Header Dinámico -->
+      <header class="bg-white border-b border-slate-100 p-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <i data-lucide="calendar-days"></i>
+          </div>
+          <h1 class="text-xl font-bold tracking-tight text-slate-800">PrenoBooking</h1>
+        </div>
+        <div id="badge-step" class="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-slate-500">
+          Paso 1 de 2
+        </div>
+      </header>
 
-    <div class="frame-area">
-      <div id="loader" class="loader">
-        <div class="spinner"></div>
-      </div>
+      <form id="mainForm" onsubmit="return false;">
+        
+        <!-- PANTALLA 1: DATOS Y PROFESIONAL -->
+        <section id="view-1" class="p-8 space-y-6 view-transition">
+          <div class="space-y-1">
+            <h2 class="text-2xl font-extrabold text-slate-900">Comencemos</h2>
+            <p class="text-slate-500 text-sm">Ingresa tus datos para buscar disponibilidad.</p>
+          </div>
 
-      <iframe
-        id="bk-frame"
-        title="Formulario de Reserva"
-        src="https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec"
-        loading="eager"
-        referrerpolicy="strict-origin-when-cross-origin">
-      </iframe>
+          <div class="space-y-4">
+            <div class="group">
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Nombre Completo</label>
+              <input type="text" id="nombre" required placeholder="Ej: Juan Pérez" 
+                     class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all bg-slate-50/50">
+            </div>
 
-      <div id="fb" class="fallback">
-        <span>No se pudo cargar aquí.</span>
-        <a class="btn"
-           href="https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec"
-           target="_top"
-           rel="noopener noreferrer">
-           Abrir directamente
-        </a>
-      </div>
+            <div class="group">
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Correo Electrónico</label>
+              <input type="email" id="correo" required placeholder="tu@email.com" 
+                     class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all bg-slate-50/50">
+            </div>
+
+            <div class="group">
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Selecciona al Profesional</label>
+              <select id="especialista-select" required onchange="checkStep1()"
+                      class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all bg-slate-50/50 appearance-none cursor-pointer">
+                <option value="" disabled selected>Cargando lista...</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="button" id="btn-next" onclick="goToStep2()" disabled
+                  class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-30">
+            Ver disponibilidad <i data-lucide="chevron-right"></i>
+          </button>
+        </section>
+
+        <!-- PANTALLA 2: FECHA, HORA Y PAGO -->
+        <section id="view-2" class="p-8 space-y-6 hidden view-transition">
+          <div class="flex items-center gap-4 pb-4 border-b border-slate-50">
+            <button type="button" onclick="goToStep1()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+              <i data-lucide="arrow-left" class="text-slate-400"></i>
+            </button>
+            <div>
+              <h2 class="text-xl font-bold text-slate-900" id="header-profesional">...</h2>
+              <p class="text-xs text-blue-600 font-semibold" id="header-precio">...</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6">
+            <!-- Fecha -->
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">1. Selecciona el día</label>
+              <input type="date" id="fecha" onchange="cargarHoras()" 
+                     class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-blue-500 bg-white shadow-sm">
+            </div>
+
+            <!-- Horas -->
+            <div id="horas-container">
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">2. Elige la hora</label>
+              <div id="slots-grid" class="grid grid-cols-3 gap-2">
+                <p class="col-span-full text-center py-6 text-slate-400 text-sm">Elige una fecha para ver horas</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones Finales -->
+          <div id="final-actions" class="pt-6 space-y-3 opacity-30 pointer-events-none transition-opacity">
+            <button type="button" onclick="procesar('pagar')" id="btn-main-pay"
+                    class="btn-pay-hero w-full text-white py-4 rounded-2xl font-extrabold text-lg flex items-center justify-center gap-3">
+              <i data-lucide="zap" class="fill-current"></i> Reservar y Pagar ahora
+            </button>
+            <button type="button" onclick="procesar('solo')" id="btn-main-solo"
+                    class="w-full bg-white text-slate-400 py-3 rounded-2xl font-medium text-sm hover:text-slate-600 transition-colors">
+              Solo reservar (pagar después)
+            </button>
+          </div>
+        </section>
+
+      </form>
     </div>
-  </div>
+
+    <!-- Footer -->
+    <p class="mt-8 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
+      <i data-lucide="shield-check" class="w-4 h-4"></i> Pagos procesados de forma segura por Khipu
+    </p>
+  </main>
 
   <script>
-    const loader = document.getElementById('loader');
-    const fb     = document.getElementById('fb');
-    const frame  = document.getElementById('bk-frame');
-
-    const hideLoader = () => loader.classList.add('hidden');
-
-    const goDirect = () => {
-      const url = frame?.src;
-      if (!url) return;
-      try { window.top.location.href = url; }
-      catch { window.location.href = url; }
-    };
-
-    if (frame) {
-      frame.addEventListener('load', hideLoader);
-      frame.addEventListener('error', () => {
-        fb.classList.add('show');
-        hideLoader();
-        goDirect();
-      });
+    /** 🛡️ MOCK PARA DESARROLLO LOCAL */
+    if (typeof google === 'undefined') {
+      window.google = { script: { run: { withSuccessHandler: (cb) => ({ withFailureHandler: () => ({
+        listarEspecialistasPublico: () => cb([{id: 'esp_1', name: 'Vicente Prueba', price: 35000, duration: 45}]),
+        obtenerHorariosDisponibles: (id, dur, fecha) => cb([{hora: '09:00', ocupado: false}, {hora: '10:00', ocupado: false}, {hora: '11:00', ocupado: true}]),
+        procesarReservaSaaS: (data) => cb({ok: true, linkPago: '#'})
+      }) }) } } };
     }
 
-    setTimeout(() => {
-      if (!loader.classList.contains('hidden')) {
-        fb.classList.add('show');
-        hideLoader();
-        goDirect();
+    // Estado Global
+    let STATE = {
+      especialistas: [],
+      seleccion: { id: '', name: '', price: 0, duration: 45, date: '', hour: '' }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initApp();
+    });
+
+    function initApp() {
+      // Fecha mínima: Hoy
+      document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+      
+      // Capturamos si existe un ID específico en la URL (ej. ?sp=vicente_perez)
+      const urlParams = new URLSearchParams(window.location.search);
+      const spIdParam = urlParams.get('sp') || "<?= SP_ID ?>"; // Soporte para GitHub y Apps Script nativo
+      
+      // Cargar lista inicial
+      google.script.run
+        .withSuccessHandler(lista => {
+          STATE.especialistas = lista;
+          const select = document.getElementById('especialista-select');
+          select.innerHTML = '<option value="" disabled selected>Selecciona al profesional...</option>';
+          
+          // LÓGICA DE ENLACE DIRECTO (OCULTAR A LOS DEMÁS)
+          if (spIdParam) {
+            const espUnico = lista.find(e => e.id === spIdParam);
+            if (espUnico) {
+              const opt = document.createElement('option');
+              opt.value = espUnico.id;
+              opt.textContent = espUnico.name;
+              select.appendChild(opt);
+              
+              // Lo dejamos seleccionado y bloqueamos el cajón
+              select.value = espUnico.id;
+              select.disabled = true;
+              select.classList.add('bg-slate-100', 'cursor-not-allowed', 'opacity-80');
+              checkStep1();
+              return; // Detenemos la ejecución para no cargar al resto
+            }
+          }
+
+          // Si no hay parámetro en la URL, mostramos a todos los activos
+          lista.forEach(e => {
+            const opt = document.createElement('option');
+            opt.value = e.id;
+            opt.textContent = e.name;
+            select.appendChild(opt);
+          });
+          checkStep1();
+        })
+        .listarEspecialistasPublico();
+    }
+
+    function checkStep1() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const correo = document.getElementById('correo').value.trim();
+      const select = document.getElementById('especialista-select').value;
+      document.getElementById('btn-next').disabled = !(nombre && correo && select);
+    }
+
+    function goToStep2() {
+      const selId = document.getElementById('especialista-select').value;
+      const esp = STATE.especialistas.find(x => x.id === selId);
+      
+      STATE.seleccion.id = esp.id;
+      STATE.seleccion.name = esp.name;
+      STATE.seleccion.price = esp.price;
+      STATE.seleccion.duration = esp.duration || 45;
+
+      document.getElementById('header-profesional').innerText = esp.name;
+      document.getElementById('header-precio').innerText = `$${esp.price.toLocaleString('es-CL')} la sesión`;
+      document.getElementById('badge-step').innerText = 'Paso 2 de 2';
+      
+      document.getElementById('view-1').classList.add('hidden');
+      document.getElementById('view-2').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function goToStep1() {
+      document.getElementById('view-2').classList.add('hidden');
+      document.getElementById('view-1').classList.remove('hidden');
+      document.getElementById('badge-step').innerText = 'Paso 1 de 2';
+    }
+
+    function cargarHoras() {
+      const fecha = document.getElementById('fecha').value;
+      if (!fecha) return;
+      STATE.seleccion.date = fecha;
+
+      const grid = document.getElementById('slots-grid');
+      grid.innerHTML = '<div class="col-span-full py-6 text-center text-slate-400"><div class="animate-spin inline-block"><i data-lucide="loader"></i></div></div>';
+      lucide.createIcons();
+
+      google.script.run
+        .withSuccessHandler(slots => {
+          grid.innerHTML = '';
+          if (!slots || slots.length === 0) {
+            grid.innerHTML = '<p class="col-span-full text-center text-red-400 text-xs py-4">No hay disponibilidad para hoy.</p>';
+            return;
+          }
+          slots.forEach(s => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = "slot-btn py-3 rounded-xl border border-slate-200 font-bold text-sm transition-all hover:border-blue-500 hover:text-blue-600 bg-white shadow-sm";
+            btn.innerText = s.hora;
+            btn.disabled = s.ocupado || s.pasado;
+            btn.onclick = () => selectSlot(btn, s.hora);
+            grid.appendChild(btn);
+          });
+        })
+        .obtenerHorariosDisponibles(STATE.seleccion.id, STATE.seleccion.duration, fecha);
+    }
+    
+    function selectSlot(btn, hora) {
+      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      STATE.seleccion.hour = hora;
+      
+      // Habilitar acciones finales
+      const actions = document.getElementById('final-actions');
+      actions.classList.remove('opacity-30', 'pointer-events-none');
+    }
+
+    function procesar(modo) {
+      const btn = document.getElementById(modo === 'pagar' ? 'btn-main-pay' : 'btn-main-solo'); 
+      const originalHtml = btn.innerHTML;
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Procesando...';
+      lucide.createIcons();
+
+      const start = new Date(`${STATE.seleccion.date}T${STATE.seleccion.hour}:00`);
+      const end = new Date(start.getTime() + (STATE.seleccion.duration * 60000));
+
+      const payload = {
+        specialistId: STATE.seleccion.id,
+        patientName: document.getElementById('nombre').value.trim(),
+        patientEmail: document.getElementById('correo').value.trim(),
+        start: start.toISOString(),
+        end: end.toISOString(),
+        modality: 'online', // Por defecto
+        modo: modo
+      };
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.ok) {
+            if (modo === 'pagar') {
+              Swal.fire({ title: '¡Listo!', text: 'Redirigiendo al pago...', icon: 'success', showConfirmButton: false, timer: 2000 });
+              setTimeout(() => window.top.location.href = res.linkPago, 1500);
+            } else {
+              Swal.fire({ title: 'Cita Reservada', text: 'Te hemos enviado un correo con los detalles para pagar después.', icon: 'success', confirmButtonColor: '#1976D2' })
+              .then(() => window.location.reload());
+            }
+          } else {
+            Swal.fire('Error', res.message || 'No se pudo agendar.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            lucide.createIcons();
+          }
+        })
+        .procesarReservaSaaS(payload);
+    }
+
+    // VERIFICACIÓN ACTIVA VÍA API (Para ejecutar desde GitHub)
+    const APPS_SCRIPT_URL = "<?= PUBLIC_BASE ?>";
+
+      window.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const action = urlParams.get('action');
+      const reservaId = urlParams.get('reservaId');
+
+      if (action === 'check' && reservaId) {
+        Swal.fire({
+          title: "Verificando tu pago...",
+          text: "Confirmando transacción segura con el banco...",
+          didOpen: () => Swal.showLoading(),
+          allowOutsideClick: false,
+          allowEscapeKey: false
+        });
+
+        fetch(`${APPS_SCRIPT_URL}?action=verify&reservaId=${reservaId}`)
+          .then(r => r.json())
+          .then(res => {
+            if (res && res.status === "pagado") {
+              Swal.fire({
+                icon: "success",
+                title: "¡Cita Confirmada!",
+                text: "Tu reserva está 100% asegurada. Hemos enviado un correo con tu enlace a la sesión.",
+                confirmButtonColor: "#16a34a"
+              }).then(() => {
+                try { history.replaceState({}, document.title, window.location.pathname); } catch(e) {}
+              });
+            } else {
+              Swal.fire({
+                icon: "info",
+                title: "Pago en proceso",
+                text: "Aún esperamos confirmación del banco. Recibirás un correo cuando se procese.",
+                confirmButtonColor: "#2563eb"
+              }).then(() => {
+                try { history.replaceState({}, document.title, window.location.pathname); } catch(e) {}
+              });
+            }
+          }).catch(() => {
+             Swal.fire("Pago en proceso", "Si el cargo fue realizado, recibirás el correo en breve.", "info");
+          });
       }
-    }, 6000);
+    });
   </script>
 </body>
 </html>
-
