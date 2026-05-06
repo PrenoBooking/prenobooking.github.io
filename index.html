@@ -221,5 +221,21 @@
       }
     }, 6000);
   </script>
+  <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
+<script>
+  window.addEventListener("message", function(event) {
+    // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
+    if (event.data === "accion_logout") {
+      
+      // Limpiamos la memoria local de GitHub por precaución
+      sessionStorage.clear();
+      localStorage.clear();
+      
+      // Forzamos a la página principal a recargarse limpia, sin memoria.
+      // Esto devolverá al usuario a la vista de Login automáticamente.
+      window.location.href = window.location.pathname; 
+    }
+  });
+</script>
 </body>
 </html>
