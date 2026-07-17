@@ -45,6 +45,7 @@
       grid-template-rows: var(--header-h) 1fr;
     }
 
+    /* 🛡️ CORREGIDO: Nombres de variables CSS recuperados */
     header {
       height: var(--header-h);
       display: flex;
@@ -146,6 +147,7 @@
     }
 
     @media (max-width: 520px) {
+      /* 🛡️ CORREGIDO: Variable de tamaño responsivo */
       :root { 
         --header-h: 60px; 
       }
@@ -155,6 +157,7 @@
         text-align: center;
       }
 
+      /* 🛡️ CORREGIDO: Selector CSS que estaba vacío */
       header {
         justify-content: center;
       }
