@@ -16,10 +16,12 @@
   <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png" />
 
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
+    :root {
       --header-h: 64px;
       --header-bg: #F5F5FA;
       --header-border: rgba(0,0,0,.08);
@@ -29,7 +31,7 @@
       --accent: #B4F461;
     }
 
-    html, body{
+    html, body {
       height: 100%;
       margin: 0;
       font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial, sans-serif;
@@ -37,24 +39,24 @@
       overflow: hidden;
     }
 
-    .wrap{
+    .wrap {
       height: 100svh;
       display: grid;
       grid-template-rows: var(--header-h) 1fr;
     }
 
-    header{
+    header {
       height: var(--header-h);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      background: var(---bg);
-      border-bottom: 1px solid var(---border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
       padding: 0 20px;
       box-sizing: border-box;
     }
 
-    .admin-badge{
+    .admin-badge {
       font-size: 13px;
       font-weight: 700;
       padding: 8px 14px;
@@ -64,14 +66,14 @@
       letter-spacing: .3px;
     }
 
-    .frame-area{
+    .frame-area {
       position: relative;
       width: 100%;
       height: 100%;
       background: var(--page-bg);
     }
 
-    iframe#admin-frame{
+    iframe#bk-frame {
       width: 100%;
       height: 100%;
       border: 0;
@@ -79,27 +81,27 @@
       background: transparent;
     }
 
-    .loader{
-      position:absolute;
+    .loader {
+      position: absolute;
       inset: 0;
-      display:grid;
-      place-items:center;
-      background: rgba(238,242,244,.65);
+      display: grid;
+      place-items: center;
+      background: rgba(238, 242, 244, .65);
       backdrop-filter: blur(4px);
       transition: opacity .2s ease;
       z-index: 2;
     }
 
-    .loader.hidden{ 
+    .loader.hidden { 
       opacity: 0; 
-      pointer-events:none; 
+      pointer-events: none; 
     }
 
-    .spinner{
+    .spinner {
       width: 52px;
       height: 52px;
       border-radius: 50%;
-      border: 6px solid rgba(25,118,210,.18);
+      border: 6px solid rgba(25, 118, 210, .18);
       border-top-color: var(--brand);
       animation: spin .9s linear infinite;
     }
@@ -108,15 +110,15 @@
       to { transform: rotate(360deg); } 
     }
 
-    .fallback{
+    .fallback {
       position: absolute;
       left: 12px;
       right: 12px;
       bottom: 12px;
-      display:none;
+      display: none;
       gap: 10px;
-      align-items:center;
-      justify-content:center;
+      align-items: center;
+      justify-content: center;
       padding: 12px 14px;
       border: 1px solid rgba(0,0,0,.10);
       border-radius: 12px;
@@ -127,34 +129,39 @@
       box-shadow: 0 12px 30px rgba(0,0,0,.12);
     }
 
-    .fallback.show{ display:flex; }
+    .fallback.show { 
+      display: flex; 
+    }
 
-    .btn{
-      display:inline-block;
+    .btn {
+      display: inline-block;
       padding: 10px 14px;
       border-radius: 10px;
-      color:#fff;
-      text-decoration:none;
+      color: #fff;
+      text-decoration: none;
       font-weight: 800;
       background: var(--accent);
-      box-shadow: 0 10px 22px rgba(67,160,71,.18);
+      color: #14141F;
+      box-shadow: 0 10px 22px rgba(180, 244, 97, .18);
       white-space: nowrap;
     }
 
-    @media (max-width: 520px){
-      :root{ ---h: 60px; }
+    @media (max-width: 520px) {
+      :root { 
+        --header-h: 60px; 
+      }
 
-      .fallback{
+      .fallback {
         flex-direction: column;
         text-align: center;
       }
 
-      {
+      header {
         justify-content: center;
       }
 
-      .admin-badge{
-        display:none;
+      .admin-badge {
+        display: none;
       }
     }
   </style>
@@ -162,7 +169,7 @@
 
 <body>
   <div class="wrap">
-        <header>
+    <header>
       <div style="display:flex;align-items:center;gap:10px;">
         <svg width="30" height="30" viewBox="0 0 56 56" aria-hidden="true">
           <rect width="56" height="56" rx="16" fill="#4338CA"/>
@@ -183,9 +190,9 @@
         <div class="spinner"></div>
       </div>
 
-      <!-- El iframe ya no tiene el "src" escrito fijo, se lo pasaremos con Javascript -->
+      <!-- El iframe carga dinámicamente la URL con parámetros desde Javascript -->
       <iframe
-        id="admin-frame"
+        id="bk-frame"
         title="Panel Administrador"
         loading="eager"
         referrerpolicy="strict-origin-when-cross-origin">
@@ -193,7 +200,7 @@
 
       <div id="fb" class="fallback">
         <span>No se pudo cargar el panel aquí. Te redirigiremos automáticamente:</span>
-        <a id="fb-link" class="btn"
+        <a id="btn-fallback" class="btn"
            href="#"
            target="_top"
            rel="noopener noreferrer">Abrir panel</a>
@@ -210,10 +217,10 @@
     // 1. URL Base de tu Apps Script
     const BASE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
     
-    // 2. Extraer parámetros de la URL en la que está el paciente (Ej: ?sp=vicente@tudominio.cl)
+    // 2. Extraer parámetros de la URL actual (Ej: ?sp=vicente@tudominio.cl o ?view=login&resetToken=...)
     const urlParams = window.location.search; 
 
-    // 3. Crear la URL final uniendo ambas partes y asignársela al iframe
+    // 3. Unir la URL base con los parámetros de consulta
     const finalUrl = BASE_SCRIPT_URL + urlParams;
 
     if (frame) frame.src = finalUrl;
@@ -235,29 +242,29 @@
       });
     }
 
+    // Temporizador de respaldo si la red de Google o el frame tardan más de 6 segundos
     setTimeout(() => {
-      if (!loader.classList.contains('hidden')) {
+      if (loader && !loader.classList.contains('hidden')) {
         fb.classList.add('show');
         hideLoader();
         goDirect();
       }
     }, 6000);
   </script>
-  <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
-<script>
-  window.addEventListener("message", function(event) {
-    // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
-    if (event.data === "accion_logout") {
-      
-      // Limpiamos la memoria local de GitHub por precaución
-      sessionStorage.clear();
-      localStorage.clear();
-      
-      // Forzamos a la página principal a recargarse limpia, sin memoria.
-      // Esto devolverá al usuario a la vista de Login automáticamente.
-      window.location.href = window.location.pathname; 
-    }
-  });
-</script>
+
+  <!-- CONTROL DE EVENTOS DE SESIÓN (Cierre de Sesión desde iframe) -->
+  <script>
+    window.addEventListener("message", function(event) {
+      // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
+      if (event.data === "accion_logout") {
+        // Limpiamos la memoria local de la ventana raíz en GitHub Pages por precaución
+        sessionStorage.clear();
+        localStorage.clear();
+        
+        // Forzamos la recarga de la página raíz, devolviendo al especialista al Login
+        window.location.href = window.location.pathname; 
+      }
+    });
+  </script>
 </body>
 </html>
