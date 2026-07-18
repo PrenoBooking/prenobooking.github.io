@@ -7,7 +7,7 @@
   <meta name="description" content="Reserva y confirmación de citas de psicoterapia – PrenoBooking." />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.svg">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Agenda aquí" />
@@ -16,65 +16,59 @@
   <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png" />
 
   <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --header-h: 64px;
-      --header-bg: #F5F5FA;
-      --header-border: rgba(0,0,0,.08);
-
-      --page-bg: #F5F5FA;
-      --brand: #4338CA;
-      --accent: #B4F461;
+    :root{
+      --header-h: 72px;
+      --page-bg: #f7f9fa;
+      --header-bg: #ffffff;
+      --border: rgba(0,0,0,.06);
+      --brand: #1F4E79;
+      --accent: #2E7D32;
+      --text-main: #1c1c1c;
+      --text-soft: rgba(0,0,0,.55);
     }
 
-    html, body {
+    html, body{
       height: 100%;
       margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--page-bg);
+      color: var(--text-main);
       overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .wrap {
+    .wrap{
       height: 100svh;
       display: grid;
       grid-template-rows: var(--header-h) 1fr;
     }
 
-    /* 🛡️ CORREGIDO: Nombres de variables CSS recuperados */
-    header {
+    header{
       height: var(--header-h);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       background: var(--header-bg);
-      border-bottom: 1px solid var(--header-border);
-      padding: 0 20px;
-      box-sizing: border-box;
+      border-bottom: 1px solid var(--border);
     }
 
-    .admin-badge {
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: var(--brand);
-      color: #fff;
-      letter-spacing: .3px;
+    header img{
+      width: clamp(160px, 18vw, 240px);
+      height: auto;
+      object-fit: contain;
     }
 
-    .frame-area {
+    .frame-area{
       position: relative;
       width: 100%;
       height: 100%;
       background: var(--page-bg);
     }
 
-    iframe#admin-frame {
+    iframe{
       width: 100%;
       height: 100%;
       border: 0;
@@ -82,89 +76,74 @@
       background: transparent;
     }
 
-    .loader {
-      position: absolute;
+    .loader{
+      position:absolute;
       inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(238, 242, 244, .65);
-      backdrop-filter: blur(4px);
-      transition: opacity .2s ease;
+      display:grid;
+      place-items:center;
+      background: rgba(247,249,250,.85);
+      transition: opacity .25s ease;
       z-index: 2;
     }
 
-    .loader.hidden { 
-      opacity: 0; 
-      pointer-events: none; 
+    .loader.hidden{
+      opacity: 0;
+      pointer-events:none;
     }
 
-    .spinner {
-      width: 52px;
-      height: 52px;
+    .spinner{
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      border: 6px solid rgba(25, 118, 210, .18);
+      border: 4px solid rgba(31,78,121,.15);
       border-top-color: var(--brand);
-      animation: spin .9s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
-    @keyframes spin { 
-      to { transform: rotate(360deg); } 
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    .fallback {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      display: none;
-      gap: 10px;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      border-radius: 12px;
-      background: #fff;
-      color: rgba(0,0,0,.72);
-      font-weight: 600;
+    .fallback{
+      position:absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display:none;
+      gap: 14px;
+      align-items:center;
+      padding: 14px 20px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-soft);
+      box-shadow: 0 20px 40px rgba(0,0,0,.06);
       z-index: 3;
-      box-shadow: 0 12px 30px rgba(0,0,0,.12);
     }
 
-    .fallback.show { 
-      display: flex; 
+    .fallback.show{
+      display:flex;
     }
 
-    .btn {
-      display: inline-block;
-      padding: 10px 14px;
+    .btn{
+      padding: 10px 16px;
       border-radius: 10px;
-      text-decoration: none;
-      font-weight: 800;
+      text-decoration:none;
+      font-weight: 600;
+      font-size: 14px;
+      color: white;
       background: var(--accent);
-      color: #14141F;
-      box-shadow: 0 10px 22px rgba(180, 244, 97, .18);
-      white-space: nowrap;
+      transition: opacity .2s ease;
     }
 
-    @media (max-width: 520px) {
-      /* 🛡️ CORREGIDO: Variable de tamaño responsivo */
-      :root { 
-        --header-h: 60px; 
-      }
+    .btn:hover{
+      opacity: .9;
+    }
 
-      .fallback {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      /* 🛡️ CORREGIDO: Selector CSS que estaba vacío */
-      header {
-        justify-content: center;
-      }
-
-      .admin-badge {
-        display: none;
-      }
+    @media (max-width: 520px){
+      :root{ --header-h: 64px; }
+      .fallback{ flex-direction: column; text-align: center; }
     }
   </style>
 </head>
@@ -172,19 +151,10 @@
 <body>
   <div class="wrap">
     <header>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <svg width="30" height="30" viewBox="0 0 56 56" aria-hidden="true">
-          <rect width="56" height="56" rx="16" fill="#4338CA"/>
-          <rect x="18" y="14" width="7" height="28" rx="2" fill="#ffffff"/>
-          <path d="M25 14 H33 A9 9 0 0 1 33 32 H25 Z" fill="#ffffff"/>
-          <rect x="34" y="34" width="8" height="8" rx="2.5" fill="#B4F461"/>
-        </svg>
-        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:#14141F;">preno<span style="font-weight:500;color:#4338CA;">booking</span></span>
-      </div>
-
-      <div class="admin-badge">
-        Panel Administrador
-      </div>
+      <img
+        src="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/logo.png"
+        alt="PrenoBooking Logo"
+        onerror="this.style.display='none'">
     </header>
 
     <div class="frame-area">
@@ -192,20 +162,19 @@
         <div class="spinner"></div>
       </div>
 
-      <!-- El iframe carga dinámicamente la URL con parámetros desde Javascript -->
+      <!-- El iframe ya no tiene el "src" escrito fijo, se lo pasaremos con Javascript -->
       <iframe
-        id="admin-frame"
-        title="Panel Administrador"
+        id="bk-frame"
+        title="Formulario de Reserva"
         loading="eager"
         referrerpolicy="strict-origin-when-cross-origin">
       </iframe>
 
       <div id="fb" class="fallback">
-        <span>No se pudo cargar el panel aquí. Te redirigiremos automáticamente:</span>
-        <a id="fb-link" class="btn"
-           href="#"
-           target="_top"
-           rel="noopener noreferrer">Abrir panel</a>
+        <span>No se pudo cargar aquí.</span>
+        <a class="btn" id="btn-fallback" target="_top" rel="noopener noreferrer">
+            Abrir directamente
+        </a>
       </div>
     </div>
   </div>
@@ -213,16 +182,16 @@
   <script>
     const loader = document.getElementById('loader');
     const fb     = document.getElementById('fb');
-    const frame  = document.getElementById('admin-frame'); // 🔑 CORREGIDO: ID exacto del HTML
-    const btnFb  = document.getElementById('fb-link');    // 🔑 CORREGIDO: ID exacto del HTML
+    const frame  = document.getElementById('bk-frame');
+    const btnFb  = document.getElementById('btn-fallback');
 
     // 1. URL Base de tu Apps Script
     const BASE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
     
-    // 2. Extraer parámetros de la URL actual (Ej: ?sp=vicente@tudominio.cl o ?view=login&resetToken=...)
+    // 2. Extraer parámetros de la URL en la que está el paciente (Ej: ?sp=vicente@tudominio.cl)
     const urlParams = window.location.search; 
 
-    // 3. Unir la URL base con los parámetros de consulta
+    // 3. Crear la URL final uniendo ambas partes y asignársela al iframe
     const finalUrl = BASE_SCRIPT_URL + urlParams;
 
     if (frame) frame.src = finalUrl;
@@ -244,29 +213,29 @@
       });
     }
 
-    // ⏳ CORREGIDO: Incrementado a 12 segundos para tolerar inicios en frío de Apps Script
     setTimeout(() => {
-      if (loader && !loader.classList.contains('hidden')) {
+      if (!loader.classList.contains('hidden')) {
         fb.classList.add('show');
         hideLoader();
-        // Nota: No llamamos a goDirect() automáticamente para no interrumpir cargas lentas pero exitosas.
+        goDirect();
       }
-    }, 12000);
+    }, 6000);
   </script>
-
-  <!-- CONTROL DE EVENTOS DE SESIÓN (Cierre de Sesión desde iframe) -->
-  <script>
-    window.addEventListener("message", function(event) {
-      // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
-      if (event.data === "accion_logout") {
-        // Limpiamos la memoria local de la ventana raíz en GitHub Pages por precaución
-        sessionStorage.clear();
-        localStorage.clear();
-        
-        // Forzamos la recarga de la página raíz, devolviendo al especialista al Login
-        window.location.href = window.location.pathname; 
-      }
-    });
-  </script>
+  <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
+<script>
+  window.addEventListener("message", function(event) {
+    // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
+    if (event.data === "accion_logout") {
+      
+      // Limpiamos la memoria local de GitHub por precaución
+      sessionStorage.clear();
+      localStorage.clear();
+      
+      // Forzamos a la página principal a recargarse limpia, sin memoria.
+      // Esto devolverá al usuario a la vista de Login automáticamente.
+      window.location.href = window.location.pathname; 
+    }
+  });
+</script>
 </body>
 </html>
