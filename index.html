@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>prenobooking</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Reserva y confirmación de citas de psicoterapia – prenobooking." />
 
   <!-- Favicon -->
@@ -38,11 +38,13 @@
       color: var(--text-main);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
+      padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     }
 
     .wrap{
-      height: 100vh; /* Respaldo para navegadores embebidos (WhatsApp, Instagram) sin soporte de svh */
+      height: 100vh;
       height: 100svh;
+      height: 100dvh;
       display: grid;
       grid-template-rows: var(--header-h) 1fr;
     }
@@ -54,6 +56,7 @@
       justify-content:center;
       background: var(--header-bg);
       border-bottom: 1px solid var(--border);
+      padding: 0 16px;
     }
 
     .brand-lockup{
@@ -80,6 +83,8 @@
       width: 100%;
       height: 100%;
       background: var(--page-bg);
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
     }
 
     iframe{
@@ -121,19 +126,32 @@
     .fallback{
       position:absolute;
       bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 16px;
+      right: 16px;
+      transform: none;
       display:none;
+      flex-direction: column;
       gap: 14px;
       align-items:center;
-      padding: 14px 20px;
-      border-radius: 14px;
+      padding: 16px;
+      border-radius: 16px;
       background: #ffffff;
       border: 1px solid var(--border);
       font-size: 14px;
       color: var(--text-soft);
-      box-shadow: 0 20px 40px rgba(0,0,0,.06);
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
       z-index: 3;
+    }
+
+    @media (min-width: 520px) {
+      .fallback {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        flex-direction: row;
+        border-radius: 14px;
+        padding: 14px 20px;
+      }
     }
 
     .fallback.show{
@@ -141,8 +159,11 @@
     }
 
     .btn{
-      padding: 10px 16px;
-      border-radius: 10px;
+      width: 100%;
+      text-align: center;
+      padding: 12px 18px;
+      box-sizing: border-box;
+      border-radius: 12px;
       text-decoration:none;
       font-weight: 600;
       font-size: 14px;
@@ -151,13 +172,22 @@
       transition: opacity .2s ease;
     }
 
+    @media (min-width: 520px) {
+      .btn {
+        width: auto;
+        padding: 10px 16px;
+        border-radius: 10px;
+      }
+    }
+
     .btn:hover{
       opacity: .9;
     }
 
-    @media (max-width: 520px){
-      :root{ --header-h: 64px; }
-      .fallback{ flex-direction: column; text-align: center; }
+    @media (max-width: 520px) {
+      :root{ --header-h: 60px; }
+      .fallback{ text-align: center; }
+      .brand-lockup span { font-size: 17px; }
     }
   </style>
 </head>
@@ -165,9 +195,6 @@
 <body>
   <div class="wrap">
     <header>
-      <!-- 🔒 El logo ya no depende de un archivo externo (logo.png) — es SVG
-           inline, así nunca falla la carga ni queda desalineado con la
-           tipografía de marca (Space Grotesk). -->
       <div class="brand-lockup">
         <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true">
           <rect x="4" y="4" width="56" height="56" rx="18" fill="#0D9488"/>
@@ -186,7 +213,6 @@
         <div class="spinner"></div>
       </div>
 
-      <!-- El iframe ya no tiene el "src" escrito fijo, se lo pasaremos con Javascript -->
       <iframe
         id="bk-frame"
         title="Formulario de Reserva"
@@ -195,7 +221,7 @@
       </iframe>
 
       <div id="fb" class="fallback">
-        <span>No se pudo cargar aquí.</span>
+        <span>No se pudo cargar de forma integrada.</span>
         <a class="btn" id="btn-fallback" target="_top" rel="noopener noreferrer">
             Abrir directamente
         </a>
@@ -209,13 +235,8 @@
     const frame  = document.getElementById('bk-frame');
     const btnFb  = document.getElementById('btn-fallback');
 
-    // 1. URL Base de tu Apps Script
     const BASE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
-    
-    // 2. Extraer parámetros de la URL en la que está el paciente (Ej: ?sp=vicente@tudominio.cl)
     const urlParams = window.location.search; 
-
-    // 3. Crear la URL final uniendo ambas partes y asignársela al iframe
     const finalUrl = BASE_SCRIPT_URL + urlParams;
 
     if (frame) frame.src = finalUrl;
@@ -245,21 +266,15 @@
       }
     }, 6000);
   </script>
-  <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
-<script>
-  window.addEventListener("message", function(event) {
-    // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
-    if (event.data === "accion_logout") {
-      
-      // Limpiamos la memoria local de GitHub por precaución
-      sessionStorage.clear();
-      localStorage.clear();
-      
-      // Forzamos a la página principal a recargarse limpia, sin memoria.
-      // Esto devolverá al usuario a la vista de Login automáticamente.
-      window.location.href = window.location.pathname; 
-    }
-  });
-</script>
+  
+  <script>
+    window.addEventListener("message", function(event) {
+      if (event.data === "accion_logout") {
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.href = window.location.pathname; 
+      }
+    });
+  </script>
 </body>
 </html>
