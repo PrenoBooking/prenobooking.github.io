@@ -216,10 +216,23 @@
     // 2. Extraer parámetros de la URL en la que está el paciente (Ej: ?sp=vicente@tudominio.cl)
     const urlParams = window.location.search; 
 
-    // 3. Crear la URL final uniendo ambas partes y asignársela al iframe
+    // 3. Crear la URL final uniendo ambas partes
     const finalUrl = BASE_SCRIPT_URL + urlParams;
 
-    if (frame) frame.src = finalUrl;
+    // 🐛 FIX: en iOS (Safari, Chrome-iOS, etc. — todos corren sobre WebKit),
+    // la protección anti-rastreo (ITP) bloquea el almacenamiento de terceros
+    // que Apps Script necesita para su propio sandbox interno. El iframe
+    // "carga" (no se dispara ningún error) pero queda en blanco. No hay forma
+    // de arreglar esto con CSS: en iOS saltamos directo a la página real,
+    // sin pasar por el iframe.
+    const esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (esIOS) {
+      window.top.location.href = finalUrl;
+    } else {
+      if (frame) frame.src = finalUrl;
+    }
     if (btnFb) btnFb.href = finalUrl;
 
     const hideLoader = () => loader.classList.add('hidden');
@@ -229,22 +242,24 @@
       catch { window.location.href = finalUrl; }
     };
 
-    if (frame) {
-      frame.addEventListener('load', hideLoader);
-      frame.addEventListener('error', () => {
-        fb.classList.add('show');
-        hideLoader();
-        goDirect();
-      });
-    }
-
-    setTimeout(() => {
-      if (!loader.classList.contains('hidden')) {
-        fb.classList.add('show');
-        hideLoader();
-        goDirect();
+    if (!esIOS) {
+      if (frame) {
+        frame.addEventListener('load', hideLoader);
+        frame.addEventListener('error', () => {
+          fb.classList.add('show');
+          hideLoader();
+          goDirect();
+        });
       }
-    }, 6000);
+
+      setTimeout(() => {
+        if (!loader.classList.contains('hidden')) {
+          fb.classList.add('show');
+          hideLoader();
+          goDirect();
+        }
+      }, 6000);
+    }
   </script>
   <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
 <script>
