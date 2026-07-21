@@ -219,47 +219,44 @@
     // 3. Crear la URL final uniendo ambas partes
     const finalUrl = BASE_SCRIPT_URL + urlParams;
 
-    // 🐛 FIX: en iOS (Safari, Chrome-iOS, etc. — todos corren sobre WebKit),
-    // la protección anti-rastreo (ITP) bloquea el almacenamiento de terceros
-    // que Apps Script necesita para su propio sandbox interno. El iframe
-    // "carga" (no se dispara ningún error) pero queda en blanco. No hay forma
-    // de arreglar esto con CSS: en iOS saltamos directo a la página real,
-    // sin pasar por el iframe.
-    const esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-    if (esIOS) {
-      window.top.location.href = finalUrl;
-    } else {
-      if (frame) frame.src = finalUrl;
+    // 🔒 FIX: usamos un formulario oculto en vez de window.location.href para
+    // navegar. Asignar location.href directo a una URL de script.google.com
+    // puede ser interceptado por los "Universal Links" de iOS, que intentan
+    // abrirlo con la app de Google Drive en vez de en el navegador — y como
+    // no es un archivo real de Drive, falla. El envío de un formulario no se
+    // ve afectado por esta interceptación.
+    function irADireccion(url) {
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = url;
+      form.target = '_top';
+      document.body.appendChild(form);
+      form.submit();
     }
+
+    if (frame) frame.src = finalUrl;
     if (btnFb) btnFb.href = finalUrl;
 
     const hideLoader = () => loader.classList.add('hidden');
 
-    const goDirect = () => {
-      try { window.top.location.href = finalUrl; }
-      catch { window.location.href = finalUrl; }
-    };
+    const goDirect = () => irADireccion(finalUrl);
 
-    if (!esIOS) {
-      if (frame) {
-        frame.addEventListener('load', hideLoader);
-        frame.addEventListener('error', () => {
-          fb.classList.add('show');
-          hideLoader();
-          goDirect();
-        });
-      }
-
-      setTimeout(() => {
-        if (!loader.classList.contains('hidden')) {
-          fb.classList.add('show');
-          hideLoader();
-          goDirect();
-        }
-      }, 6000);
+    if (frame) {
+      frame.addEventListener('load', hideLoader);
+      frame.addEventListener('error', () => {
+        fb.classList.add('show');
+        hideLoader();
+        goDirect();
+      });
     }
+
+    setTimeout(() => {
+      if (!loader.classList.contains('hidden')) {
+        fb.classList.add('show');
+        hideLoader();
+        goDirect();
+      }
+    }, 6000);
   </script>
   <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
 <script>
