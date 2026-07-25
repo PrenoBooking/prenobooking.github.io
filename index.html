@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>PrenoBooking</title>
+  <title>prenobooking</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Reserva y confirmación de citas de psicoterapia – prenobooking." />
 
@@ -20,7 +20,6 @@
 
   <style>
     :root{
-      --header-h: 72px;
       --page-bg: #F0F7F6;
       --header-bg: #ffffff;
       --border: rgba(0,0,0,.06);
@@ -46,37 +45,9 @@
       position: relative;
     }
 
-    header{
-      height: var(--header-h);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: var(--header-bg);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .brand-lockup{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-lockup span{
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 19px;
-      color: var(--text-main);
-    }
-
-    .brand-lockup span em{
-      font-style: normal;
-      font-weight: 500;
-      color: var(--brand);
-    }
-
     .frame-area{
       position: absolute;
-      top: var(--header-h);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
@@ -157,7 +128,6 @@
     }
 
     @media (max-width: 520px){
-      :root{ --header-h: 64px; }
       .fallback{ flex-direction: column; text-align: center; }
     }
   </style>
@@ -165,23 +135,6 @@
 
 <body>
   <div class="wrap">
-    <header>
-      <!-- 🔒 El logo ya no depende de un archivo externo (logo.png) — es SVG
-           inline, así nunca falla la carga ni queda desalineado con la
-           tipografía de marca (Space Grotesk). -->
-      <div class="brand-lockup">
-        <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true">
-          <rect x="4" y="4" width="56" height="56" rx="18" fill="#0D9488"/>
-          <rect x="18" y="20" width="28" height="26" rx="6" fill="#ffffff"/>
-          <rect x="22.5" y="24.5" width="19" height="17" rx="3" fill="#0D9488"/>
-          <rect x="23" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/>
-          <rect x="36" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/>
-          <circle cx="32" cy="34" r="4.5" fill="#B4F461"/>
-        </svg>
-        <span>preno<em>booking</em></span>
-      </div>
-    </header>
-
     <div class="frame-area">
       <div id="loader" class="loader">
         <div class="spinner"></div>
