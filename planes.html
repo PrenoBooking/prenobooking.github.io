@@ -6,115 +6,116 @@
   <title>Planes y precios | prenobooking</title>
   <meta name="description" content="Planes de prenobooking para profesionales, equipos y centros. Precios mensuales en pesos chilenos, más IVA.">
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
   <style>
     *{box-sizing:border-box}
-    [hidden]{display:none!important}   /* sin esto, los estilos de .banner y .prueba pisan el atributo hidden y no se esconden */
-    html{scroll-behavior:smooth}
-    body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;margin:0;background:#F0F7F6;color:#1e293b;line-height:1.5}
-    .display{font-family:'Space Grotesk','Inter',system-ui,sans-serif}
-    .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-    a{color:inherit} a:focus-visible{outline:3px solid #0F766E;outline-offset:3px;border-radius:8px}
+    [hidden]{display:none!important}
+    html{scroll-behavior:smooth;scroll-padding-top:20px}
+    :root{--pino:#0B2E2C;--bruma:#EEF5F3;--verde:#0F766E;--lima:#B4F461;--tinta:#1B3534;--suave:#4A6361;--linea:#D3E3DF}
+    body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;margin:0;background:var(--bruma);color:var(--tinta);line-height:1.55}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+    h1,h2,h4,.display{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.03em;color:var(--pino);margin:0}
+    a{color:inherit} a:focus-visible,input:focus-visible{outline:3px solid var(--verde);outline-offset:3px;border-radius:8px}
     header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:12px;flex-wrap:wrap}
-    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:18px;color:#0F172A} .logo span span{color:#0D9488;font-weight:500}
-    nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap} nav a{text-decoration:none;font-weight:600;font-size:14px;color:#475569;padding:8px 12px;border-radius:10px} nav a:hover{background:#fff;color:#0F172A}
-    nav a.login{background:#0F172A;color:#fff} nav a.login:hover{background:#1e293b;color:#fff}
-    .hero{text-align:center;padding:36px 0 8px}
-    h1{font-family:'Space Grotesk','Inter',sans-serif;font-size:clamp(30px,5vw,46px);line-height:1.1;margin:0 0 14px;color:#0F172A}
-    .sub{color:#475569;font-size:17px;max-width:640px;margin:0 auto}
-    .banner{text-align:left;max-width:760px;margin:26px auto 0;background:#fff;border:1px solid #D9F99D;border-radius:16px;padding:14px 18px;display:flex;gap:12px;align-items:center;font-size:14.5px;color:#334155}
-    .banner b{color:#0F172A} .dot{flex:none;width:10px;height:10px;border-radius:50%;background:#B4F461;box-shadow:0 0 0 4px #ECFCCB}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:start;margin:34px 0 0}
-    .plan{display:flex;flex-direction:column;gap:12px} .detalle{min-width:0}
-    .head{border-radius:24px;padding:26px 22px;text-align:center}
-    .head{display:flex;flex-direction:column;justify-content:center;align-items:center}
-    /* En escritorio las tres cabeceras y los tres botones comparten fila (subgrid): quedan alineados con cualquier texto. */
-    @media (min-width:961px){.grid{gap:12px 24px} .plan{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:12px}}
-    .head.esencial{background:linear-gradient(160deg,#F8FAFC,#E2E8F0)}
-    .head.profesional{background:linear-gradient(160deg,#F0FDFA,#99F6E4);border:2px solid #0F766E}
-    .head.equipo{background:linear-gradient(160deg,#475569,#0F172A);color:#fff}
-    .ico{width:40px;height:40px;border-radius:12px;background:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px}
-    .badge{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#0F766E;margin-bottom:6px}
-    .badge svg{background:#0F766E;border-radius:8px;padding:5px;box-sizing:content-box;width:18px;height:18px}
-    h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:30px;margin:0 0 6px;line-height:1.1}
-    .head.equipo h2{color:#fff}
-    .tag{margin:0 0 14px;font-size:14.5px;color:#475569} .head.equipo .tag{color:#CBD5E1}
-    .price{margin:0;line-height:1} .price .num{font-family:'Space Grotesk','Inter',sans-serif;font-size:46px;font-weight:700;letter-spacing:-.02em}
-    .price small{font-size:20px;font-weight:600;color:#475569} .head.equipo .price small{color:#CBD5E1}
-    .extra{margin:6px 0 0;font-size:14px;font-weight:600;color:#334155} .head.equipo .extra{color:#E2E8F0}
-    .total{margin:8px 0 0;font-size:14px;color:#475569} .head.equipo .total{color:#CBD5E1}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:18px;color:var(--pino)} .logo span span{color:#0D9488;font-weight:500}
+    nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap} nav a{text-decoration:none;font-weight:600;font-size:14.5px;color:var(--suave);padding:8px 12px;border-radius:10px} nav a:hover{background:#fff;color:var(--pino)}
+    nav a.login{border:2px solid var(--pino);color:var(--pino)} nav a.login:hover{background:var(--pino);color:#fff}
+    .hero{padding:36px 0 8px;max-width:760px}
+    h1{font-size:clamp(34px,5.4vw,58px);line-height:1.04}
+    .sub{color:var(--suave);font-size:18px;margin:16px 0 0}
+    .banner{margin:26px 0 0;background:#fff;border:1px solid #D9F99D;border-radius:16px;padding:14px 18px;display:flex;gap:12px;align-items:center;font-size:15px;color:#334155}
+    .banner b{color:var(--pino)} .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--lima);box-shadow:0 0 0 4px #ECFCCB}
+    .escalera{display:grid;gap:18px;margin:38px 0 0}
+    .paso{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:26px 40px;background:#fff;border-left:10px solid var(--c);border-radius:0 24px 24px 0;padding:28px 30px;margin-left:calc(var(--i) * 4.5%);box-shadow:0 1px 3px rgba(15,23,42,.06)}
+    .paso h2{font-size:30px;line-height:1.1}
+    .tag{margin:8px 0 18px;font-size:15.5px;color:var(--suave)}
+    .price{margin:0;line-height:1} .price .num{font-family:'Space Grotesk','Inter',sans-serif;font-size:46px;font-weight:700;letter-spacing:-.02em;color:var(--pino)}
+    .price small{font-size:18px;font-weight:600;color:var(--suave)}
+    .extra{margin:8px 0 0;font-size:14.5px;font-weight:600;color:#334155}
+    .total{margin:8px 0 0;font-size:14.5px;color:var(--suave)}
     .prueba{display:inline-block;margin:14px 0 0;padding:6px 14px;border-radius:999px;background:#ECFCCB;color:#3F6212;font-weight:700;font-size:13.5px}
-    .cta{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:15.5px;padding:14px 16px;border-radius:14px;transition:filter .15s}
-    .cta:hover{filter:brightness(.95)}
-    .cta.sec{background:#E2E8F0;color:#0F172A} .cta.main{background:#0F766E;color:#fff} .cta.dark{background:#0F172A;color:#fff}
-    .incluye{margin:8px 4px 0;font-size:16px;color:#334155}
-    .cat{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#64748B;font-weight:700;margin:12px 4px 2px}
-    .feats{list-style:none;margin:0;padding:0}
-    .feat{display:flex;gap:10px;align-items:flex-start;background:#fff;border-radius:10px;padding:10px 12px;margin:0 0 6px;font-size:14.5px;color:#1e293b}
-    .centros{margin:56px 0 0;background:#fff;border-radius:28px;padding:34px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:34px;align-items:start;box-shadow:0 1px 3px rgba(15,23,42,.06)}
-    .centros h2{color:#0F172A} .centros .price .num{font-size:40px} .centros .sub2{color:#475569;margin:0 0 16px}
-    .centros .feat{background:#F8FAFC}
-    footer{margin:56px 0 0;padding:26px 0 48px;border-top:1px solid #D7E6E3;font-size:13px;color:#64748B;display:flex;gap:10px 22px;flex-wrap:wrap;justify-content:space-between}
-    footer a{color:#0F766E}
-    @media (max-width:960px){.grid{grid-template-columns:minmax(0,1fr);max-width:520px;margin-left:auto;margin-right:auto} .centros{grid-template-columns:minmax(0,1fr);padding:24px} }
-    @media (max-width:520px){header{justify-content:center} .banner{align-items:flex-start} }
-    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .cta{transition:none} }
-  </style>
+    .cta{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:15.5px;padding:14px 16px;border-radius:14px;margin-top:20px;transition:filter .15s}
+    .cta:hover{filter:brightness(.93)}
+    .cta.sec{background:#E2E8F0;color:var(--pino)} .cta.main{background:var(--verde);color:#fff} .cta.dark{background:var(--pino);color:#fff}
+    .incluye{margin:0 0 4px;font-size:16px;color:#334155}
+    .cat{font-size:16px;margin:16px 0 8px;color:var(--pino)} .detalle .cat:first-child{margin-top:0}
+    .feats{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+    .feat{display:flex;gap:10px;align-items:flex-start;background:#F4F9F8;border-radius:10px;padding:10px 12px;font-size:15px;color:var(--tinta)}
+    .calc{margin-top:22px;padding:16px 18px;border:1.5px dashed #9DB8B3;border-radius:16px;display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center}
+    .calc label{font-weight:700;font-size:15px;color:var(--pino)}
+    .calc input{width:90px;font:inherit;font-weight:700;padding:9px 12px;border:1.5px solid var(--linea);border-radius:10px;background:#fff;color:var(--pino)}
+    .calc-res{margin:0;font-size:15px;color:var(--suave)} .calc-res b{font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--pino)}
+    footer{margin:56px 0 0;padding:26px 0 48px;border-top:1px solid #D7E6E3;font-size:13.5px;color:#64748B;display:flex;gap:10px 22px;flex-wrap:wrap;justify-content:space-between}
+    footer a{color:var(--verde)}
+    @media (max-width:900px){.paso{grid-template-columns:minmax(0,1fr);margin-left:calc(var(--i) * 2%);padding:24px 20px}}
+    @media (max-width:520px){header{justify-content:center} .banner{align-items:flex-start}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .cta{transition:none}}
+</style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <a class="logo" href="https://prenobooking.github.io/" aria-label="prenobooking, inicio">
+      <a class="logo" href="./" aria-label="prenobooking, inicio">
         <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="4" width="56" height="56" rx="18" fill="#0D9488"/><rect x="18" y="20" width="28" height="26" rx="6" fill="#ffffff"/><rect x="22.5" y="24.5" width="19" height="17" rx="3" fill="#0D9488"/><rect x="23" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/><rect x="36" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/><circle cx="32" cy="34" r="4.5" fill="#B4F461"/></svg>
         <span class="display">preno<span>booking</span></span>
       </a>
-      <nav aria-label="Principal"><a href="#planes">Planes</a><a href="#centros">Para centros</a><a class="login" href="https://prenobooking.github.io/admin">Iniciar sesión</a></nav>
+      <nav aria-label="Principal"><a href="./">Inicio</a><a href="#planes">Planes</a><a class="login" href="https://prenobooking.github.io/admin">Iniciar sesión</a></nav>
     </header>
 
     <main>
       <div class="hero">
-        <h1>Planes simples para tu consulta</h1>
-        <p class="sub">Agenda, cobros y seguimiento de tus pacientes en un solo lugar. <span id="hero-prueba">Prueba gratis 14 días los planes Esencial y Profesional, sin tarjeta. </span>Precios mensuales en pesos chilenos, más IVA. Puedes darte de baja cuando quieras.</p>
+        <h1>Cada etapa de tu consulta tiene su plan</h1>
+        <p class="sub">Parte con lo básico y sube de escalón cuando lo necesites: cada plan suma lo del anterior. <span id="hero-prueba">Prueba gratis 14 días los planes Esencial y Profesional, sin tarjeta. </span>Precios mensuales en pesos chilenos, más IVA. Puedes darte de baja cuando quieras.</p>
         <div class="banner" id="banner-fundadores" role="note"><span class="dot" aria-hidden="true"></span><span><b>Socios fundadores:</b> <span id="banner-fundadores-texto">los primeros 30 tienen 3 meses gratis y su tarifa congelada por 12 meses.</span></span></div>
       </div>
 
-      <div class="grid" id="planes">
-    <section class="plan" id="plan-esencial" data-plan="esencial" aria-labelledby="t-esencial">
-      <div class="head esencial"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><h2 id="t-esencial">Plan Esencial</h2><p class="tag">Para profesionales que quieren ordenar su agenda y sus cobros.</p>
-        <p class="price"><span class="num">$14.900</span> <small>+ IVA</small></p><p class="total">Total con IVA: $17.731 al mes</p><p class="prueba">14 días de prueba gratis</p></div>
-      <a class="cta sec" data-nombre="Esencial" href="registro.html?plan=esencial">Enrólate y prueba 14 días gratis</a>
-      <div class="detalle"><h4 class="cat">Perfil y agenda</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Agenda online 24/7 con tu link de reserva</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Atención online y presencial</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Se agenda en tu Google Calendar</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Tus pacientes cancelan o reagendan desde su link</span></li></ul><h4 class="cat">Pagos y cobros</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Cobro de cada sesión con Khipu, directo a tu cuenta</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Sin comisión de PrenoBooking por sesión</span></li></ul><h4 class="cat">Comunicación con pacientes</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Confirmaciones y recordatorios por correo</span></li></ul><h4 class="cat">Atención presencial</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Reserva de salas en centros, con cobro por uso y packs de sesiones</span></li></ul></div>
-    </section>
-    <section class="plan" id="plan-profesional" data-plan="profesional" aria-labelledby="t-profesional">
-      <div class="head profesional"><div class="badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Más popular</div><h2 id="t-profesional">Plan Profesional</h2><p class="tag">Para quienes quieren llevar el registro clínico, medir su consulta y preparar sus boletas más rápido.</p>
-        <p class="price"><span class="num">$24.900</span> <small>+ IVA</small></p><p class="total">Total con IVA: $29.631 al mes</p><p class="prueba">14 días de prueba gratis</p></div>
-      <a class="cta main" data-nombre="Profesional" href="registro.html?plan=profesional">Enrólate y prueba 14 días gratis</a>
-      <div class="detalle"><p class="incluye">Todo lo del plan <b>Esencial</b> más:</p><h4 class="cat">Ficha y seguimiento</h4><ul class="feats"><li class="feat" data-fn="clinico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Notas de sesión privadas, tareas y cuestionarios para tus pacientes</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Alertas de riesgo en los cuestionarios</span></li></ul><h4 class="cat">Gestión de tu consulta</h4><ul class="feats"><li class="feat" data-fn="metricas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Métricas de ingresos, citas y cancelaciones</span></li><li class="feat" data-fn="csv"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Exportación de reservas a CSV</span></li><li class="feat" data-fn="boleta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Boleta de honorarios asistida, con la retención del año</span></li></ul></div>
-    </section>
-    <section class="plan" id="plan-equipo" data-plan="equipo" aria-labelledby="t-equipo">
-      <div class="head equipo"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h2 id="t-equipo">Plan Equipo</h2><p class="tag">Para clínicas y equipos que administran a varios especialistas desde una sola cuenta.</p>
-        <p class="price"><span class="num">$19.900</span> <small>+ IVA</small></p><p class="extra">por especialista · mínimo 3</p><p class="total">Total con IVA: $23.681 por especialista al mes</p><p class="total">Desde $71.043 con IVA al mes (3 especialistas)</p></div>
-      <a class="cta dark" data-nombre="Equipo" href="mailto:soporte@prenobooking.cl?subject=Quiero%20enrolarme:%20plan%20Equipo&amp;body=Hola%2C%20quiero%20contratar%20el%20plan%20Equipo.%0A%0ANombre%3A%20%0ARUT%3A%20%0ACorreo%3A%20%0AEspecialidad%3A%20">Enrólate en el plan Equipo</a>
-      <div class="detalle"><p class="incluye">Todo lo del plan <b>Profesional</b> más:</p><h4 class="cat">Tu equipo</h4><ul class="feats"><li class="feat" data-fn="equipo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Administras las cuentas de tu equipo: creas, reseteas claves y activas o desactivas accesos</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Cada especialista con su agenda, sus pacientes y sus cobros, sin mezclarse</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Sumas personas cuando quieras: pagas solo el proporcional del mes</span></li></ul></div>
-    </section>
-      </div>
-
-      <section class="centros" id="centros" aria-labelledby="t-espacio" data-plan="espacio">
-        <div>
-          <h2 id="t-espacio">Plan Espacio</h2>
-          <p class="sub2">Para centros que arriendan salas a profesionales.</p>
-          <p class="price"><span class="num">$29.900</span> <small>+ IVA al mes</small></p>
-          <p class="extra">Incluye 4 salas · cada sala adicional $5.000 + IVA</p>
-          <p class="total">Total con IVA: $35.581 al mes con 4 salas</p>
-          <p style="margin-top:18px"><a class="cta main" href="mailto:soporte@prenobooking.cl?subject=Quiero%20enrolarme:%20plan%20Espacio&amp;body=Hola%2C%20quiero%20contratar%20el%20plan%20Espacio.%0A%0ANombre%3A%20%0ARUT%3A%20%0ACorreo%3A%20%0AEspecialidad%3A%20">Enrola tu centro</a></p>
+      <div class="escalera" id="planes">
+      <section class="paso" id="plan-esencial" data-plan="esencial" aria-labelledby="t-esencial" style="--i:0;--c:#99F6E4">
+        <div class="resumen">
+          <h2 id="t-esencial">Plan Esencial</h2>
+          <p class="tag">Estás partiendo y quieres ordenar tu agenda y tus cobros.</p>
+          <p class="price"><span class="num">$14.900</span> <small>+ IVA</small></p><p class="total">Total con IVA: $17.731 al mes</p><p class="prueba">14 días de prueba gratis</p>
+          <a class="cta sec" data-nombre="Esencial" href="registro.html?plan=esencial">Enrólate y prueba 14 días gratis</a>
         </div>
-        <div><h4 class="cat">Panel del centro</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Agenda de tus salas: quién la usa y cuándo, sin ver datos de pacientes</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Métricas: horas por sala y por especialista, cancelaciones e impagos</span></li></ul><h4 class="cat">Cobros</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Cobro por el uso de cada sala, con link de pago a tu cuenta Khipu</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Packs de sesiones prepagados para tus especialistas</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Bloqueo automático de reservas nuevas a quien acumule cobros vencidos</span></li></ul></div>
+        <div class="detalle"><h4 class="cat">Perfil y agenda</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Agenda online 24/7 con tu link de reserva</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Atención online y presencial</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Se agenda en tu Google Calendar</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Tus pacientes cancelan o reagendan desde su link</span></li></ul><h4 class="cat">Pagos y cobros</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Cobro de cada sesión con Khipu, directo a tu cuenta</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Sin comisión de PrenoBooking por sesión</span></li></ul><h4 class="cat">Comunicación con pacientes</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Confirmaciones y recordatorios por correo</span></li></ul><h4 class="cat">Atención presencial</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Reserva de salas en centros, con cobro por uso y packs de sesiones</span></li></ul></div>
       </section>
+      <section class="paso" id="plan-profesional" data-plan="profesional" aria-labelledby="t-profesional" style="--i:1;--c:#2DD4BF">
+        <div class="resumen">
+          <h2 id="t-profesional">Plan Profesional</h2>
+          <p class="tag">Tu consulta ya está andando y quieres llevar el registro clínico, medir y preparar tus boletas más rápido.</p>
+          <p class="price"><span class="num">$24.900</span> <small>+ IVA</small></p><p class="total">Total con IVA: $29.631 al mes</p><p class="prueba">14 días de prueba gratis</p>
+          <a class="cta main" data-nombre="Profesional" href="registro.html?plan=profesional">Enrólate y prueba 14 días gratis</a>
+        </div>
+        <div class="detalle"><p class="incluye">Todo lo del plan <b>Esencial</b> más:</p><h4 class="cat">Ficha y seguimiento</h4><ul class="feats"><li class="feat" data-fn="clinico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Notas de sesión privadas, tareas y cuestionarios para tus pacientes</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Alertas de riesgo en los cuestionarios</span></li></ul><h4 class="cat">Gestión de tu consulta</h4><ul class="feats"><li class="feat" data-fn="metricas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Métricas de ingresos, citas y cancelaciones</span></li><li class="feat" data-fn="csv"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Exportación de reservas a CSV</span></li><li class="feat" data-fn="boleta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Boleta de honorarios asistida, con la retención del año</span></li></ul></div>
+      </section>
+      <section class="paso" id="plan-equipo" data-plan="equipo" aria-labelledby="t-equipo" style="--i:2;--c:#0D9488">
+        <div class="resumen">
+          <h2 id="t-equipo">Plan Equipo</h2>
+          <p class="tag">Ya son varios: una clínica o un equipo que administra a sus especialistas desde una sola cuenta.</p>
+          <p class="price"><span class="num">$19.900</span> <small>+ IVA</small></p><p class="extra">por especialista · mínimo 3</p><p class="total">Total con IVA: $23.681 por especialista al mes</p>
+          <a class="cta dark" data-nombre="Equipo" href="mailto:soporte@prenobooking.cl?subject=Quiero%20enrolarme:%20plan%20Equipo&amp;body=Hola%2C%20quiero%20contratar%20el%20plan%20Equipo.%0A%0ANombre%3A%20%0ARUT%3A%20%0ACorreo%3A%20%0AEspecialidad%3A%20">Enrólate en el plan Equipo</a>
+        </div>
+        <div class="detalle"><p class="incluye">Todo lo del plan <b>Profesional</b> más:</p><h4 class="cat">Tu equipo</h4><ul class="feats"><li class="feat" data-fn="equipo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Administras las cuentas de tu equipo: creas, reseteas claves y activas o desactivas acceso</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Cada especialista con su agenda, sus pacientes y sus cobros, sin mezclarse</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Sumas personas cuando quieras: pagas solo el proporcional del mes</span></li></ul><div class="calc" data-calc="equipo"><label for="n-equipo">¿Cuántos especialistas?</label>
+          <input id="n-equipo" type="number" inputmode="numeric" min="3" max="200" value="3">
+          <p class="calc-res"><b id="r-equipo-total">$71.043</b> al mes con IVA <span id="r-equipo-neto">($59.700 + IVA)</span></p></div></div>
+      </section>
+      <section class="paso" id="plan-espacio" data-plan="espacio" aria-labelledby="t-espacio" style="--i:3;--c:#0F766E">
+        <div class="resumen">
+          <h2 id="t-espacio">Plan Espacio</h2>
+          <p class="tag">Tienes un centro y arriendas salas a profesionales.</p>
+          <p class="price"><span class="num">$29.900</span> <small>+ IVA</small></p><p class="extra">incluye 4 salas · cada sala adicional $5.000 + IVA</p><p class="total">Total con IVA: $35.581 al mes con 4 salas</p>
+          <a class="cta main" data-nombre="Espacio" href="mailto:soporte@prenobooking.cl?subject=Quiero%20enrolarme:%20plan%20Espacio&amp;body=Hola%2C%20quiero%20contratar%20el%20plan%20Espacio.%0A%0ANombre%3A%20%0ARUT%3A%20%0ACorreo%3A%20%0AEspecialidad%3A%20">Enrola tu centro</a>
+        </div>
+        <div class="detalle"><h4 class="cat">Panel del centro</h4><ul class="feats"><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Agenda de tus salas: quién la usa y cuándo, sin ver datos de pacientes</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Métricas: horas por sala y por especialista, cancelaciones e impagos</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Cobro por el uso de cada sala, con link de pago a tu cuenta Khipu</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Packs de sesiones prepagados para tus especialistas</span></li><li class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg><span>Bloqueo automático de reservas nuevas a quien acumule cobros vencidos</span></li></ul><div class="calc" data-calc="espacio"><label for="n-espacio">¿Cuántas salas?</label>
+          <input id="n-espacio" type="number" inputmode="numeric" min="4" max="100" value="4">
+          <p class="calc-res"><b id="r-espacio-total">$35.581</b> al mes con IVA <span id="r-espacio-neto">($29.900 + IVA)</span></p></div></div>
+      </section>
+      </div>
     </main>
 
     <footer>
       <span>Los precios no incluyen IVA: a cada cobro se le suma el 19% y se detalla neto, IVA y total.</span>
-      <span><a href="https://prenobooking.github.io/terminos.html">Términos del Servicio</a> · <a href="https://prenobooking.github.io/privacidad.html">Política de Privacidad</a> · <a href="mailto:soporte@prenobooking.cl">soporte@prenobooking.cl</a></span>
+      <span><a href="terminos.html">Términos del Servicio</a> · <a href="privacidad.html">Política de Privacidad</a> · <a href="mailto:soporte@prenobooking.cl">soporte@prenobooking.cl</a></span>
     </footer>
   </div>
 <script>
@@ -161,6 +162,25 @@
         .then(function (c) { clearTimeout(t); if (valido(c)) aplicar(c); })
         .catch(function () {});
     } catch (e) {}
+  })();
+</script>
+<script>
+  // Calculadoras de Equipo y Espacio: solo muestran el monto. El cobro real lo calcula el sistema al enrolar.
+  (function () {
+    function pesos(n) { return "$" + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function entero(v, min, max) { var n = Math.floor(Number(v)); return isFinite(n) ? Math.min(max, Math.max(min, n)) : min; }
+    function enlazar(id, min, max, neto) {
+      var i = document.getElementById("n-" + id); if (!i) return;
+      function calcular() {
+        var n = entero(i.value, min, max), net = neto(n), total = Math.round(net * 1.19);
+        document.getElementById("r-" + id + "-total").textContent = pesos(total);
+        document.getElementById("r-" + id + "-neto").textContent = "(" + pesos(net) + " + IVA)";
+      }
+      i.addEventListener("input", calcular);
+      i.addEventListener("blur", function () { i.value = entero(i.value, min, max); calcular(); });
+    }
+    enlazar("equipo", 3, 200, function (n) { return n * 19900; });
+    enlazar("espacio", 4, 100, function (n) { return 29900 + (n - 4) * 5000; });
   })();
 </script>
 </body>

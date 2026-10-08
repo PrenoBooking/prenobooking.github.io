@@ -1,235 +1,402 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>PrenoBooking | Reserva tu hora</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Reserva y confirma tu hora de psicoterapia en simple — prenobooking." />
-
-  <!-- Favicon -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>prenobooking | Terapia online y presencial con profesionales verificados</title>
+  <meta name="description" content="Encuentra a tu terapeuta, reserva en minutos y paga al reservar. Sesiones online o presenciales con profesionales cuyo título fue revisado.">
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
-
-  <!-- Open Graph -->
-  <meta property="og:site_name" content="prenobooking" />
-  <meta property="og:title" content="Reserva tu hora | prenobooking" />
-  <meta property="og:description" content="Elige a tu especialista, revisa su disponibilidad y agenda tu hora en minutos." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Reserva tu hora | prenobooking" />
-  <meta name="twitter:description" content="Elige a tu especialista, revisa su disponibilidad y agenda tu hora en minutos." />
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+  <script>
+    // Los enlaces de reserva que ya circulan (?sp=...) y el regreso del pago (?action=...&reservaId=...) llegaban a esta dirección.
+    // Se llevan a reservar.html con los mismos parámetros, antes de dibujar nada.
+    (function () {
+      var q = new URLSearchParams(window.location.search);
+      if (q.has("sp") || q.has("reservaId") || q.get("action") === "check") window.location.replace("reservar.html" + window.location.search);
+    })();
+  </script>
   <style>
-    :root{
-      --page-bg: #F0F7F6;
-      --header-bg: #ffffff;
-      --border: rgba(0,0,0,.06);
-      --brand: #0D9488;
-      --accent: #B4F461;
-      --text-main: #0F172A;
-      --text-soft: rgba(0,0,0,.55);
-    }
+    :root{--pino:#0B2E2C;--bruma:#EEF5F3;--verde:#0F766E;--verde-claro:#0D9488;--lima:#B4F461;--arena:#E7D9C3;--blanco:#fff;--tinta:#1B3534;--suave:#4A6361;--linea:#D3E3DF}
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    html{scroll-behavior:smooth;scroll-padding-top:84px}
+    body{margin:0;font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bruma);color:var(--tinta);line-height:1.55;font-size:17px}
+    h1,h2,h3,.display{font-family:'Space Grotesk','Inter',system-ui,sans-serif;letter-spacing:-.03em;line-height:1.05;margin:0;color:var(--pino)}
+    p{margin:0}
+    a{color:inherit}
+    a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--verde);outline-offset:3px;border-radius:10px}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+    .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-    html, body{
-      height: 100%;
-      margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--page-bg);
-      color: var(--text-main);
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
+    /* Encabezado */
+    .top{position:sticky;top:0;z-index:20;background:rgba(238,245,243,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
+    .top .wrap{display:flex;align-items:center;gap:18px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:18px;color:var(--pino);margin-right:auto}
+    .logo span span{color:var(--verde-claro);font-weight:500}
+    .menu{display:flex;gap:2px;flex-wrap:wrap}
+    .menu a{text-decoration:none;font-weight:600;font-size:14.5px;color:var(--suave);padding:8px 12px;border-radius:10px}
+    .menu a:hover{background:var(--blanco);color:var(--pino)}
+    .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:15px;padding:12px 20px;border-radius:14px;border:2px solid transparent;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+    .btn.primario{background:var(--verde);color:#fff} .btn.primario:hover{background:#0B5F59}
+    .btn.borde{border-color:var(--pino);color:var(--pino);background:transparent} .btn.borde:hover{background:var(--pino);color:#fff}
+    .btn.chico{padding:9px 16px;font-size:14px}
+    @media (max-width:760px){.menu{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;margin:0 -6px;padding-bottom:2px} .menu a{white-space:nowrap}}
 
-    .wrap{
-      height: 100vh; /* Respaldo para navegadores embebidos (WhatsApp, Instagram) sin soporte de svh */
-      height: 100svh;
-      position: relative;
-    }
+    /* Hero */
+    .hero{padding:56px 0 40px}
+    .hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:end}
+    h1{font-size:clamp(38px,6vw,66px)}
+    .hero .sub{font-size:19px;color:var(--suave);max-width:520px;margin-top:20px}
+    .hero .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+    .puertas{display:flex;align-items:flex-end;gap:12px;height:380px}
+    .puerta{flex:1;border-radius:999px 999px 0 0;display:flex;align-items:flex-end;padding:0 14px 18px;font-weight:700;font-size:14.5px;line-height:1.25;transform-origin:bottom;animation:sube .7s cubic-bezier(.2,.8,.2,1) both}
+    .puerta.a{height:68%;background:var(--arena);color:var(--pino);animation-delay:.05s}
+    .puerta.b{height:100%;background:var(--verde);color:#fff;animation-delay:.15s}
+    .puerta.c{height:80%;background:var(--lima);color:var(--pino);animation-delay:.25s}
+    @keyframes sube{from{transform:scaleY(.4);opacity:0}to{transform:none;opacity:1}}
+    @media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)} .puertas{height:220px}}
 
-    .frame-area{
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--page-bg);
-    }
+    /* Secciones */
+    section.bloque{padding:72px 0}
+    .titulo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 40px;align-items:end;margin-bottom:34px}
+    h2{font-size:clamp(30px,4.2vw,46px)}
+    .titulo p{color:var(--suave);max-width:460px}
+    @media (max-width:760px){.titulo{grid-template-columns:minmax(0,1fr)}}
 
-    iframe{
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-      background: transparent;
-    }
+    /* Cómo funciona */
+    .pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:2px solid var(--pino)}
+    .paso{padding:22px 24px 8px 0}
+    .paso .n{font-family:'Space Grotesk',sans-serif;font-size:44px;font-weight:700;color:var(--verde-claro);line-height:1}
+    .paso h3{font-size:22px;margin:10px 0 6px;letter-spacing:-.02em}
+    .paso p{color:var(--suave);font-size:16px}
+    @media (max-width:760px){.pasos{grid-template-columns:minmax(0,1fr)} .paso{padding-right:0}}
 
-    .loader{
-      position:absolute;
-      inset: 0;
-      display:grid;
-      place-items:center;
-      background: rgba(245,245,250,.85);
-      transition: opacity .25s ease;
-      z-index: 2;
-    }
+    /* Terapias: filas tipográficas */
+    .terapias{border-top:1px solid var(--linea);list-style:none;margin:0;padding:0}
+    .terapia{border-bottom:1px solid var(--linea)}
+    .terapia button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;gap:6px 28px;align-items:baseline;padding:20px 8px;cursor:pointer}
+    .terapia button:hover,.terapia button:focus-visible{background:var(--blanco)}
+    .terapia .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);letter-spacing:-.02em;color:var(--pino)}
+    .terapia .desc{color:var(--suave);font-size:16px}
+    .terapia .cuenta{font-weight:700;font-size:14.5px;color:var(--verde);white-space:nowrap;min-width:110px;text-align:right}
+    .terapia .cuenta.cero{color:#7C908D;font-weight:500}
+    .aviso{margin-top:18px;font-size:14px;color:var(--suave);max-width:640px}
+    @media (max-width:760px){.terapia button{grid-template-columns:minmax(0,1fr) auto} .terapia .desc{grid-column:1/-1;grid-row:2} .terapia .cuenta{min-width:0}}
 
-    .loader.hidden{
-      opacity: 0;
-      pointer-events:none;
-    }
+    /* Especialistas */
+    .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+    .chip{font-family:inherit;font-weight:600;font-size:14.5px;padding:9px 16px;border-radius:999px;border:1.5px solid var(--linea);background:var(--blanco);color:var(--tinta);cursor:pointer}
+    .chip:hover{border-color:var(--verde)}
+    .chip[aria-pressed="true"]{background:var(--pino);border-color:var(--pino);color:#fff}
+    .sep{width:1px;background:var(--linea);margin:2px 6px}
+    .lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}
+    @media (max-width:960px){.lista{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:600px){.lista{grid-template-columns:minmax(0,1fr)}}
+    .esp{display:flex;flex-direction:column;gap:12px}
+    .arco{aspect-ratio:4/3.4;border-radius:999px 999px 0 0;background:var(--arena);overflow:hidden;display:flex;align-items:center;justify-content:center;width:62%}
+    .arco img{width:100%;height:100%;object-fit:cover;display:block}
+    .arco .ini{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:44px;color:var(--pino);opacity:.55}
+    .esp h3{font-size:23px;letter-spacing:-.02em}
+    .esp .rol{color:var(--verde);font-weight:600;font-size:15px;margin-top:-6px}
+    .esp .bio{color:var(--suave);font-size:15.5px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    .esp .meta{display:flex;flex-wrap:wrap;gap:6px}
+    .etq{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--blanco);border:1px solid var(--linea);color:var(--tinta)}
+    .esp .precio{font-weight:600;font-size:15px}
+    .esp .btn{align-self:flex-start;margin-top:auto}
+    .vacio{background:var(--blanco);border:1px dashed #9DB8B3;border-radius:20px;padding:30px;max-width:640px}
+    .vacio h3{font-size:24px;margin-bottom:8px}
+    .vacio p{color:var(--suave)}
+    .vacio .btn{margin-top:16px}
 
-    .spinner{
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 4px solid rgba(13,148,136,.15);
-      border-top-color: var(--brand);
-      animation: spin 0.8s linear infinite;
-    }
+    /* Nosotros */
+    .nosotros{background:var(--pino);color:#D6E7E3}
+    .nosotros h2,.nosotros h3{color:#fff}
+    .nosotros .cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px}
+    .nosotros .grande{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3.2vw,34px);line-height:1.2;letter-spacing:-.02em;color:#fff;margin-top:22px;max-width:560px}
+    .valores{display:grid;gap:22px;align-content:start}
+    .valor h3{font-size:20px;margin-bottom:4px;letter-spacing:-.01em}
+    .valor p{font-size:15.5px;color:#B7CFCA}
+    .nosotros a{color:var(--lima)}
+    @media (max-width:860px){.nosotros .cols{grid-template-columns:minmax(0,1fr);gap:30px}}
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    /* Planes (escalera) */
+    .escalera{display:grid;gap:14px}
+    .escalon{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 20px;align-items:center;background:var(--blanco);border-left:8px solid var(--c);border-radius:0 18px 18px 0;padding:18px 22px;margin-left:calc(var(--i) * 5.5%);text-decoration:none}
+    .escalon:hover{background:#F8FCFB}
+    .escalon .q{font-size:15px;color:var(--suave)}
+    .escalon .p{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:var(--pino);letter-spacing:-.02em;grid-row:1/3;grid-column:2;text-align:right;line-height:1.1}
+    .escalon .p small{display:block;font-size:13px;font-weight:500;color:var(--suave);letter-spacing:0}
+    .escalon .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:var(--pino);letter-spacing:-.02em}
+    .cierre{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .cierre p{color:var(--suave);font-size:15px}
+    @media (max-width:760px){.escalon{margin-left:calc(var(--i) * 3%);grid-template-columns:minmax(0,1fr)} .escalon .p{grid-row:auto;grid-column:auto;text-align:left;margin-top:6px}}
 
-    .fallback{
-      position:absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      display:none;
-      gap: 14px;
-      align-items:center;
-      padding: 14px 20px;
-      border-radius: 14px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      font-size: 14px;
-      color: var(--text-soft);
-      box-shadow: 0 20px 40px rgba(0,0,0,.06);
-      z-index: 3;
-    }
+    /* Preguntas */
+    .preguntas{max-width:760px}
+    details{border-bottom:1px solid var(--linea);padding:4px 0}
+    details:first-of-type{border-top:1px solid var(--linea)}
+    summary{cursor:pointer;font-weight:600;font-size:18px;padding:16px 4px;list-style:none;display:flex;justify-content:space-between;gap:16px;color:var(--pino)}
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"+";font-size:24px;line-height:1;color:var(--verde);flex:none}
+    details[open] summary::after{content:"\2212"}
+    details p{padding:0 4px 18px;color:var(--suave);font-size:16.5px;max-width:640px}
 
-    .fallback.show{
-      display:flex;
-    }
-
-    .btn{
-      padding: 10px 16px;
-      border-radius: 10px;
-      text-decoration:none;
-      font-weight: 600;
-      font-size: 14px;
-      color: white;
-      background: var(--brand);
-      transition: opacity .2s ease;
-    }
-
-    .btn:hover{
-      opacity: .9;
-    }
-
-    @media (max-width: 520px){
-      .fallback{ flex-direction: column; text-align: center; }
-    }
+    footer{background:var(--pino);color:#B7CFCA;padding:38px 0;font-size:14.5px}
+    footer .wrap{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap}
+    footer a{color:#fff}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .puerta{animation:none} .btn{transition:none}}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="frame-area">
-      <div id="loader" class="loader">
-        <div class="spinner"></div>
-      </div>
-
-      <!-- El iframe ya no tiene el "src" escrito fijo, se lo pasaremos con Javascript -->
-      <iframe
-        id="bk-frame"
-        title="Formulario de Reserva"
-        loading="eager"
-        referrerpolicy="strict-origin-when-cross-origin">
-      </iframe>
-
-      <div id="fb" class="fallback">
-        <span>No se pudo cargar aquí.</span>
-        <a class="btn" id="btn-fallback" target="_top" rel="noopener noreferrer">
-            Abrir directamente
-        </a>
-      </div>
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="./" aria-label="prenobooking, inicio">
+        <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="4" width="56" height="56" rx="18" fill="#0D9488"/><rect x="18" y="20" width="28" height="26" rx="6" fill="#ffffff"/><rect x="23" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/><rect x="36" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/><circle cx="32" cy="34" r="4.5" fill="#B4F461"/></svg>
+        <span class="display">preno<span>booking</span></span>
+      </a>
+      <nav class="menu" aria-label="Principal">
+        <a href="#terapias">Terapias</a><a href="#especialistas">Especialistas</a><a href="#nosotros">Nosotros</a><a href="#planes">Planes</a><a href="#preguntas">Preguntas</a>
+      </nav>
+      <a class="btn borde chico" href="https://prenobooking.github.io/admin">Iniciar sesión</a>
     </div>
-  </div>
+  </header>
 
-  <script>
-    const loader = document.getElementById('loader');
-    const fb     = document.getElementById('fb');
-    const frame  = document.getElementById('bk-frame');
-    const btnFb  = document.getElementById('btn-fallback');
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <h1>Una hora para ti, con el profesional indicado.</h1>
+          <p class="sub">Elige a tu terapeuta, reserva en minutos y paga al reservar. Sesiones online o presenciales con profesionales cuyo título fue revisado antes de entrar.</p>
+          <div class="acciones">
+            <a class="btn primario" href="#especialistas">Ver especialistas</a>
+            <a class="btn borde" href="#planes">Soy profesional</a>
+          </div>
+        </div>
+        <div class="puertas" aria-hidden="true">
+          <div class="puerta a">Online o presencial</div>
+          <div class="puerta b">Título verificado</div>
+          <div class="puerta c">Pagas al reservar</div>
+        </div>
+      </div>
+    </section>
 
-    // 1. URL Base de tu Apps Script
-    const BASE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
-    
-    // 2. Extraer parámetros de la URL en la que está el paciente (Ej: ?sp=vicente@tudominio.cl)
-    const urlParams = window.location.search; 
+    <section class="bloque" id="como" aria-labelledby="t-como">
+      <div class="wrap">
+        <div class="titulo"><h2 id="t-como">Reservar toma tres pasos</h2><p>Sin llamadas ni mensajes de ida y vuelta para coordinar.</p></div>
+        <div class="pasos">
+          <div class="paso"><div class="n">1</div><h3>Elige</h3><p>Mira quién atiende, con qué enfoque y a qué precio. Filtra por terapia o modalidad.</p></div>
+          <div class="paso"><div class="n">2</div><h3>Reserva y paga</h3><p>Escoge un horario libre y paga en línea. Tu hora queda confirmada al pagar.</p></div>
+          <div class="paso"><div class="n">3</div><h3>Recibe tu correo</h3><p>Te llega la confirmación y, si es online, el enlace de la sesión. Antes de la hora te enviamos un recordatorio.</p></div>
+        </div>
+      </div>
+    </section>
 
-    // 3. Crear la URL final uniendo ambas partes
-    const finalUrl = BASE_SCRIPT_URL + urlParams;
+    <section class="bloque" id="terapias" aria-labelledby="t-terapias" style="padding-top:24px">
+      <div class="wrap">
+        <div class="titulo"><h2 id="t-terapias">Tipos de terapia</h2><p>No necesitas saber cuál es la tuya. Si dudas, parte por el enfoque que te suene más cercano y conversa con el profesional.</p></div>
+        <ul class="terapias" id="terapias-lista"></ul>
+        <p class="aviso">Esta guía es orientativa y no reemplaza una evaluación. Si estás en una situación de riesgo, llama al <b>*4141</b> (línea de prevención del suicidio, 24 horas) o al 131 si es una emergencia.</p>
+      </div>
+    </section>
 
-    // 🔒 FIX: usamos un formulario oculto en vez de window.location.href para
-    // navegar. Asignar location.href directo a una URL de script.google.com
-    // puede ser interceptado por los "Universal Links" de iOS, que intentan
-    // abrirlo con la app de Google Drive en vez de en el navegador — y como
-    // no es un archivo real de Drive, falla. El envío de un formulario no se
-    // ve afectado por esta interceptación.
-    function irADireccion(url) {
-      const form = document.createElement('form');
-      form.method = 'GET';
-      form.action = url;
-      form.target = '_top';
-      document.body.appendChild(form);
-      form.submit();
-    }
+    <section class="bloque" id="especialistas" aria-labelledby="t-esp" style="padding-top:24px">
+      <div class="wrap">
+        <div class="titulo"><h2 id="t-esp">Nuestros especialistas</h2><p id="esp-nota">Cada profesional eligió aparecer aquí y escribió su propia presentación.</p></div>
+        <div class="filtros" id="filtros" role="group" aria-label="Filtrar especialistas" hidden></div>
+        <p class="sr" id="esp-estado" role="status" aria-live="polite"></p>
+        <div class="lista" id="esp-lista"></div>
+        <div class="vacio" id="esp-vacio" hidden>
+          <h3 id="esp-vacio-t">Estamos sumando especialistas</h3>
+          <p id="esp-vacio-p">Pronto verás aquí a los profesionales que atienden con nosotros. Si eres profesional y quieres aparecer, crea tu cuenta.</p>
+          <a class="btn primario" href="registro.html">Crear mi cuenta</a>
+        </div>
+      </div>
+    </section>
 
-    if (frame) frame.src = finalUrl;
-    if (btnFb) btnFb.href = finalUrl;
+    <section class="bloque nosotros" id="nosotros" aria-labelledby="t-nos">
+      <div class="wrap">
+        <div class="cols">
+          <div>
+            <h2 id="t-nos">Sobre nosotros</h2>
+            <p class="grande">prenobooking nació en Chile para que pedir una hora de terapia sea simple, y para que los profesionales dediquen su tiempo a atender y no a coordinar.</p>
+          </div>
+          <div class="valores">
+            <div class="valor"><h3>Profesionales revisados</h3><p>Pedimos el certificado de título antes de aprobar cada cuenta. Una vez decidida la solicitud, el documento se borra.</p></div>
+            <div class="valor"><h3>El pago va directo al profesional</h3><p>Cada profesional cobra con su propia cuenta de Khipu. prenobooking no cobra comisión por sesión.</p></div>
+            <div class="valor"><h3>Tus datos, cuidados</h3><p>Tu información de salud solo la ve tu profesional. Lee cómo la tratamos en la <a href="privacidad.html">Política de Privacidad</a>.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    const hideLoader = () => loader.classList.add('hidden');
+    <section class="bloque" id="planes" aria-labelledby="t-planes">
+      <div class="wrap">
+        <div class="titulo"><h2 id="t-planes">Si eres profesional, crece a tu ritmo</h2><p>Empiezas con lo básico y subes de escalón cuando tu consulta lo pide. Los primeros 14 días de Esencial y Profesional son gratis.</p></div>
+        <div class="escalera">
+          <a class="escalon" href="planes.html#plan-esencial" style="--i:0;--c:#99F6E4"><span class="nom">Parto</span><span class="q">Agenda online y cobro de cada sesión.</span><span class="p"><span id="h-esencial">$14.900</span><small>+ IVA al mes</small></span></a>
+          <a class="escalon" href="planes.html#plan-profesional" style="--i:1;--c:#2DD4BF"><span class="nom">Me consolido</span><span class="q">Ficha clínica, métricas y boleta de honorarios.</span><span class="p"><span id="h-profesional">$24.900</span><small>+ IVA al mes</small></span></a>
+          <a class="escalon" href="planes.html#plan-equipo" style="--i:2;--c:#0D9488"><span class="nom">Somos varios</span><span class="q">Una cuenta para administrar a todo tu equipo.</span><span class="p">$19.900<small>+ IVA por especialista (mínimo 3)</small></span></a>
+          <a class="escalon" href="planes.html#plan-espacio" style="--i:3;--c:#0F766E"><span class="nom">Tenemos un espacio</span><span class="q">Salas, packs y cobro por uso para tu centro.</span><span class="p">$29.900<small>+ IVA al mes, con 4 salas</small></span></a>
+        </div>
+        <div class="cierre">
+          <a class="btn primario" href="registro.html">Crear mi cuenta</a>
+          <a class="btn borde" href="planes.html">Ver todos los detalles</a>
+          <p>Sin tarjeta para probar. Puedes darte de baja cuando quieras.</p>
+        </div>
+      </div>
+    </section>
 
-    const goDirect = () => irADireccion(finalUrl);
+    <section class="bloque" id="preguntas" aria-labelledby="t-faq" style="padding-top:24px">
+      <div class="wrap preguntas">
+        <h2 id="t-faq" style="margin-bottom:26px">Preguntas frecuentes</h2>
+        <details><summary>¿Cómo pago mi sesión?</summary><p>Pagas en línea al reservar, con Khipu. El pago llega directo al profesional y tu hora queda confirmada.</p></details>
+        <details><summary>¿Puedo cancelar o cambiar mi hora?</summary><p>Sí, desde el enlace que te llega por correo. Cada profesional define cuántas horas antes se puede cambiar o cancelar (por defecto, 24). Pasado ese plazo, escríbele a tu profesional.</p></details>
+        <details><summary>¿Cómo es una sesión online?</summary><p>Recibes el enlace por correo y te conectas a la hora acordada desde tu computador o celular.</p></details>
+        <details><summary>¿Quién ve mis datos?</summary><p>Solo el profesional con quien reservas. Nunca se muestran a otros pacientes ni al público.</p></details>
+        <details><summary>Soy profesional, ¿cómo parto?</summary><p>Crea tu cuenta, adjunta tu certificado de título y revisamos tu solicitud. Si te aprobamos, te enviamos tus accesos por correo.</p></details>
+        <details><summary>¿Qué hago si necesito ayuda urgente?</summary><p>prenobooking no atiende urgencias. Llama al *4141 (línea de prevención del suicidio, 24 horas) o al 131 en una emergencia.</p></details>
+      </div>
+    </section>
+  </main>
 
-    if (frame) {
-      frame.addEventListener('load', hideLoader);
-      frame.addEventListener('error', () => {
-        fb.classList.add('show');
-        hideLoader();
-        goDirect();
+  <footer>
+    <div class="wrap">
+      <span>© prenobooking · Chile</span>
+      <span><a href="terminos.html">Términos del Servicio</a> · <a href="privacidad.html">Política de Privacidad</a> · <a href="mailto:soporte@prenobooking.cl">soporte@prenobooking.cl</a> · <a href="https://prenobooking.github.io/admin">Iniciar sesión</a></span>
+    </div>
+  </footer>
+
+<script>
+  (function () {
+    var BASE = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
+    var TERAPIAS = [
+      { id: "TCC", nombre: "Cognitivo-conductual", desc: "Trabaja la relación entre lo que piensas, sientes y haces. Se usa mucho en ansiedad, ánimo y fobias." },
+      { id: "Sistemica", nombre: "Sistémica y familiar", desc: "Mira a la persona dentro de su familia o su pareja y cómo se relacionan entre sí." },
+      { id: "Psicodinamica", nombre: "Psicodinámica", desc: "Explora experiencias y patrones de tu historia que siguen influyendo hoy." },
+      { id: "Humanista", nombre: "Humanista y Gestalt", desc: "Pone el foco en el presente, en lo que vives y en tu crecimiento personal." },
+      { id: "ACT", nombre: "ACT (aceptación y compromiso)", desc: "Aprendes a convivir con pensamientos difíciles y a actuar según lo que te importa." },
+      { id: "EMDR", nombre: "EMDR", desc: "Método estructurado para procesar recuerdos que siguen doliendo, como experiencias traumáticas." },
+      { id: "Integrativa", nombre: "Integrativa", desc: "Combina enfoques según lo que necesite cada persona." }
+    ];
+    var NOMBRE = {}; TERAPIAS.forEach(function (t) { NOMBRE[t.id] = t.nombre; });
+    var estado = { lista: [], conteos: {}, terapia: "", modalidad: "", cargado: false };
+    var $ = function (id) { return document.getElementById(id); };
+    function el(tag, clase, texto) { var e = document.createElement(tag); if (clase) e.className = clase; if (texto !== undefined) e.textContent = texto; return e; }
+    function pesos(n) { return "$" + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function plural(n, uno, varios) { return n + " " + (n === 1 ? uno : varios); }
+
+    function pintarTerapias() {
+      var ul = $("terapias-lista"); ul.textContent = "";
+      TERAPIAS.forEach(function (t) {
+        var n = estado.conteos[t.id] || 0;
+        var li = el("li", "terapia"), b = el("button"); b.type = "button";
+        b.appendChild(el("span", "nom", t.nombre)); b.appendChild(el("span", "desc", t.desc));
+        var c = el("span", "cuenta" + (estado.cargado && n === 0 ? " cero" : ""), !estado.cargado ? "" : n > 0 ? plural(n, "especialista", "especialistas") : "Pronto");
+        b.appendChild(c);
+        b.setAttribute("aria-label", t.nombre + (estado.cargado && n > 0 ? ", " + plural(n, "especialista", "especialistas") : ""));
+        b.addEventListener("click", function () { estado.terapia = t.id; pintarFiltros(); pintarEspecialistas(); $("especialistas").scrollIntoView({ behavior: "smooth" }); });
+        li.appendChild(b); ul.appendChild(li);
       });
     }
 
-    setTimeout(() => {
-      if (!loader.classList.contains('hidden')) {
-        fb.classList.add('show');
-        hideLoader();
-        goDirect();
-      }
-    }, 6000);
-  </script>
-  <!-- CÓDIGO PARA AÑADIR EN GITHUB -->
-<script>
-  window.addEventListener("message", function(event) {
-    // Escuchamos si el iframe de Google nos manda la señal de cierre de sesión
-    if (event.data === "accion_logout") {
-      
-      // Limpiamos la memoria local de GitHub por precaución
-      sessionStorage.clear();
-      localStorage.clear();
-      
-      // Forzamos a la página principal a recargarse limpia, sin memoria.
-      // Esto devolverá al usuario a la vista de Login automáticamente.
-      window.location.href = window.location.pathname; 
+    function chip(texto, activo, alClick) {
+      var b = el("button", "chip", texto); b.type = "button"; b.setAttribute("aria-pressed", activo ? "true" : "false");
+      b.addEventListener("click", alClick); return b;
     }
-  });
+    function pintarFiltros() {
+      var f = $("filtros"); f.textContent = "";
+      if (!estado.lista.length) { f.hidden = true; return; }
+      f.hidden = false;
+      f.appendChild(chip("Todos", !estado.terapia && !estado.modalidad, function () { estado.terapia = ""; estado.modalidad = ""; pintarFiltros(); pintarEspecialistas(); }));
+      TERAPIAS.filter(function (t) { return estado.conteos[t.id] > 0; }).forEach(function (t) {
+        f.appendChild(chip(t.nombre, estado.terapia === t.id, function () { estado.terapia = estado.terapia === t.id ? "" : t.id; pintarFiltros(); pintarEspecialistas(); }));
+      });
+      f.appendChild(el("span", "sep"));
+      [["online", "Online"], ["presencial", "Presencial"]].forEach(function (m) {
+        f.appendChild(chip(m[1], estado.modalidad === m[0], function () { estado.modalidad = estado.modalidad === m[0] ? "" : m[0]; pintarFiltros(); pintarEspecialistas(); }));
+      });
+    }
+
+    function tarjeta(e) {
+      var c = el("article", "esp");
+      var arco = el("div", "arco");
+      if (e.fotoUrl && /^https:\/\//i.test(e.fotoUrl)) {
+        var img = new Image(); img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.src = e.fotoUrl;
+        img.onerror = function () { arco.textContent = ""; arco.appendChild(el("span", "ini", iniciales(e.nombre))); };
+        arco.appendChild(img);
+      } else arco.appendChild(el("span", "ini", iniciales(e.nombre)));
+      c.appendChild(arco);
+      c.appendChild(el("h3", "", e.nombre));
+      if (e.especialidad) c.appendChild(el("p", "rol", e.especialidad));
+      c.appendChild(el("p", "bio", e.bio));
+      var meta = el("div", "meta");
+      (e.enfoques || []).forEach(function (id) { if (NOMBRE[id]) meta.appendChild(el("span", "etq", NOMBRE[id])); });
+      if (e.enfoqueOtro) meta.appendChild(el("span", "etq", e.enfoqueOtro));
+      if (e.online) meta.appendChild(el("span", "etq", "Online"));
+      if (e.presencial) meta.appendChild(el("span", "etq", "Presencial"));
+      c.appendChild(meta);
+      if (e.precio > 0) c.appendChild(el("p", "precio", pesos(e.precio) + " · " + e.duracion + " min"));
+      var a = el("a", "btn primario chico", "Reservar con " + e.nombre.split(" ")[0]);
+      a.href = "reservar.html?sp=" + encodeURIComponent(e.id);
+      c.appendChild(a);
+      return c;
+    }
+    function iniciales(n) { return String(n || "?").split(/\s+/).slice(0, 2).map(function (p) { return p.charAt(0); }).join("").toUpperCase(); }
+
+    function pintarEspecialistas() {
+      var cont = $("esp-lista"); cont.textContent = "";
+      var vis = estado.lista.filter(function (e) {
+        return (!estado.terapia || (e.enfoques || []).indexOf(estado.terapia) >= 0) && (!estado.modalidad || e[estado.modalidad]);
+      });
+      var vacio = $("esp-vacio");
+      if (!estado.cargado) { vacio.hidden = true; return; }
+      if (!estado.lista.length) { $("esp-vacio-t").textContent = "Estamos sumando especialistas"; vacio.hidden = false; $("esp-estado").textContent = ""; return; }
+      if (!vis.length) {
+        $("esp-vacio-t").textContent = "Nadie coincide con ese filtro por ahora";
+        $("esp-vacio-p").textContent = "Prueba quitando un filtro para ver a todos los especialistas.";
+        vacio.querySelector("a").hidden = true; vacio.hidden = false;
+      } else { vacio.hidden = true; }
+      vis.forEach(function (e) { cont.appendChild(tarjeta(e)); });
+      $("esp-estado").textContent = plural(vis.length, "especialista disponible", "especialistas disponibles");
+    }
+
+    function valido(d) { return d && d.ok === true && Array.isArray(d.especialistas) && Array.isArray(d.terapias); }
+    function limpio(e) {
+      return e && typeof e.id === "string" && /^[A-Za-z0-9_.-]{3,120}$/.test(e.id) && typeof e.nombre === "string" && typeof e.bio === "string";
+    }
+    pintarTerapias();
+    try {
+      var ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, 8000);
+      fetch(BASE + "?action=directorio", { signal: ctl.signal, cache: "no-store", credentials: "omit" })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          clearTimeout(t);
+          if (!valido(d)) throw new Error("respuesta inesperada");
+          estado.lista = d.especialistas.filter(limpio);
+          d.terapias.forEach(function (x) { if (NOMBRE[x.id] && typeof x.cantidad === "number") estado.conteos[x.id] = x.cantidad; });
+          estado.cargado = true; pintarTerapias(); pintarFiltros(); pintarEspecialistas();
+        })
+        .catch(function () {
+          $("esp-vacio-t").textContent = "No pudimos cargar a los especialistas";
+          $("esp-vacio-p").textContent = "Revisa tu conexión y recarga la página. Si sigue igual, escríbenos a soporte@prenobooking.cl.";
+          $("esp-vacio").querySelector("a").hidden = true; $("esp-vacio").hidden = false;
+        });
+    } catch (e) {}
+
+    // Precios vigentes de Esencial y Profesional (los que ajustas desde tu panel). Si no responde, quedan los escritos arriba.
+    try {
+      var c2 = new AbortController(), t2 = setTimeout(function () { c2.abort(); }, 7000);
+      fetch(BASE + "?action=config", { signal: c2.signal, cache: "no-store", credentials: "omit" })
+        .then(function (r) { return r.json(); })
+        .then(function (c) {
+          clearTimeout(t2);
+          if (!c || c.ok !== true || !Array.isArray(c.planes)) return;
+          c.planes.forEach(function (p) {
+            if ((p.id === "esencial" || p.id === "profesional") && typeof p.neto === "number" && p.neto > 0 && p.neto < 10000000 && Math.floor(p.neto) === p.neto) $("h-" + p.id).textContent = pesos(p.neto);
+          });
+        }).catch(function () {});
+    } catch (e) {}
+  })();
 </script>
 </body>
 </html>
