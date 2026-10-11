@@ -85,7 +85,7 @@
       <div class="hero">
         <div><h1>Cada etapa de tu consulta tiene su plan</h1>
         <p class="sub"><span id="hero-prueba">Prueba gratis 14 días los planes Esencial y Profesional, sin tarjeta. </span>Precios mensuales en pesos chilenos, más IVA. Te das de baja cuando quieras.</p></div>
-        <div class="banner" id="banner-fundadores" role="note"><span class="dot" aria-hidden="true"></span><span><b>Socios fundadores:</b> <span id="banner-fundadores-texto">los primeros 30 tienen 3 meses gratis y su tarifa congelada por 12 meses.</span></span></div>
+        <div class="banner" id="banner-fundadores" role="note"><span class="dot" aria-hidden="true"></span><span><b>Socios fundadores:</b> <span id="banner-fundadores-texto">los primeros 30 tienen 3 meses gratis repartidos en el año y su tarifa congelada por 12 meses.</span></span></div>
       </div>
 
       <div class="planes" id="planes">
@@ -230,7 +230,7 @@
       if (prueba) texto("#hero-prueba", "Prueba gratis " + plural(c.pruebaDias, "día", "días") + " los planes Esencial y Profesional, sin tarjeta. ");
       mostrar("#hero-prueba", prueba);
       var f = c.fundadores, partes = [];
-      if (f.mesesGratis > 0) partes.push(plural(f.mesesGratis, "mes", "meses") + " gratis");
+      if (f.mesesGratis > 0) partes.push(plural(f.mesesGratis, "mes", "meses") + " gratis repartidos en el año");
       if (f.mesesTarifa > 0) partes.push("su tarifa congelada por " + plural(f.mesesTarifa, "mes", "meses"));
       if (f.activa && f.hayCupos && partes.length) texto("#banner-fundadores-texto", "los primeros " + f.cupos + " tienen " + partes.join(" y ") + ".");
       mostrar("#banner-fundadores", f.activa && f.hayCupos && partes.length > 0);
