@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Reserva tu hora | prenobooking</title>
+  <title>Reserva tu hora | PrenoBooking</title>
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
   <style>
@@ -16,7 +16,7 @@
 <body>
 <noscript>Para reservar necesitas activar JavaScript. También puedes escribirnos a <a href="mailto:soporte@prenobooking.cl">soporte@prenobooking.cl</a>.</noscript>
 <script>
-  // Esta página enmarca la reserva real (que vive en el Apps Script de prenobooking, igual que el panel en /admin y el registro).
+  // Esta página enmarca la reserva real (que vive en el Apps Script de PrenoBooking, igual que el panel en /admin y el registro).
   // Recibe los enlaces que ya circulan: ?sp=<especialista> y el regreso del pago (?action=check&reservaId=...).
   // Reenvía solo esos tres parámetros y solo si tienen la forma esperada: nada más pasa.
   (function () {
@@ -31,7 +31,7 @@
     }
     var f = document.createElement("iframe");
     f.src = BASE_APP_URL + "?" + partes.join("&");
-    f.title = "Reserva tu hora en prenobooking";
+    f.title = "Reserva tu hora en PrenoBooking";
     f.setAttribute("allow", "payment");
     document.body.appendChild(f);
   })();
