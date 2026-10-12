@@ -50,6 +50,7 @@
     .comp th:first-child,.comp td:first-child{text-align:left;width:38%}
     .comp tbody th{font-weight:500;color:var(--tinta);background:#fff}
     .comp tr.grupo th{background:#F4F9F8;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--suave);font-weight:700;padding:6px 12px}
+    .comp .c{display:none}
     .si{color:var(--verde);font-weight:800;font-size:16px} .no{color:#B6C7C3}
     .calcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
     .calc{padding:14px 16px;background:#fff;border-radius:18px;display:flex;gap:8px 14px;flex-wrap:wrap;align-items:center;box-shadow:0 1px 3px rgba(15,23,42,.06)}
@@ -67,6 +68,15 @@
       .cta{font-size:12.5px;padding:9px 4px;margin-top:10px}
       .banner{max-width:none;width:100%} .calcs{grid-template-columns:minmax(0,1fr)}
       .sub{font-size:13.5px}
+      /* Comparación: las 4 columnas caben en pantalla, sin deslizar de lado */
+      .tabla-wrap{overflow:visible;border-radius:14px}
+      table.comp{min-width:0;table-layout:fixed;font-size:12.5px}
+      .comp th,.comp td{padding:8px 3px}
+      .comp th:first-child,.comp td:first-child{width:40%;padding-left:10px;line-height:1.3}
+      .comp thead th{font-size:11.5px;padding:10px 2px;position:static}
+      .comp thead .l{display:none} .comp thead .c{display:inline}
+      .comp tr.grupo th{font-size:10.5px;padding:6px 10px}
+      .si{font-size:15px}
     }
     @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .cta{transition:none}}
   </style>
@@ -127,7 +137,7 @@
       <section class="bloque" id="comparar" aria-labelledby="t-comp">
         <h2 id="t-comp">Compara lo que incluye cada plan</h2>
         <p>Cada plan suma lo del anterior. Espacio es el plan para centros: tiene su propio panel.</p>
-        <div class="tabla-wrap"><table class="comp"><thead><tr><th scope="col"><span class="sr">Función</span></th><th scope="col">Esencial</th><th scope="col">Profesional</th><th scope="col">Equipo</th><th scope="col">Espacio</th></tr></thead>
+        <div class="tabla-wrap"><table class="comp"><thead><tr><th scope="col"><span class="sr">Función</span></th><th scope="col"><span class="l">Esencial</span><span class="c" aria-hidden="true">Esen.</span></th><th scope="col"><span class="l">Profesional</span><span class="c" aria-hidden="true">Prof.</span></th><th scope="col">Equipo</th><th scope="col">Espacio</th></tr></thead>
         <tbody>
 <tr class="grupo"><th colspan="5">Tu agenda y tus cobros</th></tr>
 <tr><th scope="row">Agenda online 24/7 con tu link de reserva</th><td><span class="si" aria-label="Incluido">&#10003;</span></td><td><span class="si" aria-label="Incluido">&#10003;</span></td><td><span class="si" aria-label="Incluido">&#10003;</span></td><td><span class="no" aria-label="No incluido">&mdash;</span></td></tr>
