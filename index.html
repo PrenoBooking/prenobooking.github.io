@@ -6,13 +6,29 @@
   <title>prenobooking | Terapia online y presencial con profesionales verificados</title>
   <meta name="description" content="Encuentra a tu terapeuta, reserva en minutos y paga al reservar. Sesiones online o presenciales con profesionales cuyo título fue revisado.">
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vicentemoyanoas-boop/booking-preno-assets/main/favicon.png">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+  <meta name="theme-color" content="#EEF5F3">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap"></noscript>
   <script>
     // Los enlaces de reserva que ya circulan (?sp=...) y el regreso del pago (?action=...&reservaId=...) llegaban a esta dirección.
     // Se llevan a reservar.html con los mismos parámetros, antes de dibujar nada.
     (function () {
       var q = new URLSearchParams(window.location.search);
-      if (q.has("sp") || q.has("reservaId") || q.get("action") === "check") window.location.replace("reservar.html" + window.location.search);
+      if (q.has("sp") || q.has("reservaId") || q.get("action") === "check") { window.location.replace("reservar.html" + window.location.search); return; }
+      // Las dos consultas al servidor salen de inmediato, en paralelo con la carga de la página.
+      var BASE = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
+      function pedir(accion, ms) {
+        try {
+          var ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, ms);
+          return fetch(BASE + "?action=" + accion, { signal: ctl.signal, credentials: "omit" })
+            .then(function (r) { clearTimeout(t); return r.json(); });
+        } catch (e) { return Promise.reject(e); }
+      }
+      window.__pb = { dir: pedir("directorio", 9000), cfg: pedir("config", 8000) };
+      window.__pb.dir.catch(function () {}); window.__pb.cfg.catch(function () {});
     })();
   </script>
   <style>
@@ -20,131 +36,155 @@
     *{box-sizing:border-box}
     [hidden]{display:none!important}
     html{scroll-behavior:smooth;scroll-padding-top:84px}
-    body{margin:0;font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bruma);color:var(--tinta);line-height:1.55;font-size:17px}
+    body{margin:0;font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bruma);color:var(--tinta);line-height:1.5;font-size:15.5px}
     h1,h2,h3,.display{font-family:'Space Grotesk','Inter',system-ui,sans-serif;letter-spacing:-.03em;line-height:1.05;margin:0;color:var(--pino)}
     p{margin:0}
     a{color:inherit}
     a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--verde);outline-offset:3px;border-radius:10px}
-    .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
     .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
     /* Encabezado */
     .top{position:sticky;top:0;z-index:20;background:rgba(238,245,243,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
-    .top .wrap{display:flex;align-items:center;gap:18px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
-    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:18px;color:var(--pino);margin-right:auto}
+    .top .wrap{display:flex;align-items:center;gap:16px;padding-top:9px;padding-bottom:9px;flex-wrap:wrap}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:16px;color:var(--pino);margin-right:auto}
     .logo span span{color:var(--verde-claro);font-weight:500}
     .menu{display:flex;gap:2px;flex-wrap:wrap}
-    .menu a{text-decoration:none;font-weight:600;font-size:14.5px;color:var(--suave);padding:8px 12px;border-radius:10px}
+    .menu a{text-decoration:none;font-weight:600;font-size:13.5px;color:var(--suave);padding:7px 11px;border-radius:10px}
     .menu a:hover{background:var(--blanco);color:var(--pino)}
-    .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:15px;padding:12px 20px;border-radius:14px;border:2px solid transparent;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+    .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
     .btn.primario{background:var(--verde);color:#fff} .btn.primario:hover{background:#0B5F59}
     .btn.borde{border-color:var(--pino);color:var(--pino);background:transparent} .btn.borde:hover{background:var(--pino);color:#fff}
-    .btn.chico{padding:9px 16px;font-size:14px}
+    .btn.chico{padding:8px 14px;font-size:13px}
     @media (max-width:760px){.menu{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;margin:0 -6px;padding-bottom:2px} .menu a{white-space:nowrap}}
 
     /* Hero */
-    .hero{padding:56px 0 40px}
-    .hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:end}
-    h1{font-size:clamp(38px,6vw,66px)}
-    .hero .sub{font-size:19px;color:var(--suave);max-width:520px;margin-top:20px}
-    .hero .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-    .puertas{display:flex;align-items:flex-end;gap:12px;height:380px}
-    .puerta{flex:1;border-radius:999px 999px 0 0;display:flex;align-items:flex-end;padding:0 14px 18px;font-weight:700;font-size:14.5px;line-height:1.25;transform-origin:bottom;animation:sube .7s cubic-bezier(.2,.8,.2,1) both}
+    .hero{padding:36px 0 24px}
+    .hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:36px;align-items:end}
+    h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08}
+    .hero .sub{font-size:16px;color:var(--suave);max-width:500px;margin-top:14px}
+    .hero .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+    .puertas{display:flex;align-items:flex-end;gap:10px;height:270px}
+    .puerta{flex:1;border-radius:999px 999px 0 0;display:flex;align-items:flex-end;padding:0 14px 18px;font-weight:700;font-size:13px;line-height:1.25;transform-origin:bottom;animation:sube .7s cubic-bezier(.2,.8,.2,1) both}
     .puerta.a{height:68%;background:var(--arena);color:var(--pino);animation-delay:.05s}
     .puerta.b{height:100%;background:var(--verde);color:#fff;animation-delay:.15s}
     .puerta.c{height:80%;background:var(--lima);color:var(--pino);animation-delay:.25s}
     @keyframes sube{from{transform:scaleY(.4);opacity:0}to{transform:none;opacity:1}}
-    @media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)} .puertas{height:220px}}
+    @media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)} .puertas{height:150px}}
 
     /* Secciones */
-    section.bloque{padding:72px 0}
-    .titulo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 40px;align-items:end;margin-bottom:34px}
-    h2{font-size:clamp(30px,4.2vw,46px)}
-    .titulo p{color:var(--suave);max-width:460px}
+    section.bloque{padding:48px 0}
+    .titulo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 36px;align-items:end;margin-bottom:22px}
+    h2{font-size:clamp(22px,2.8vw,30px)}
+    .titulo p{color:var(--suave);max-width:460px;font-size:14.5px}
     @media (max-width:760px){.titulo{grid-template-columns:minmax(0,1fr)}}
 
     /* Cómo funciona */
     .pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:2px solid var(--pino)}
-    .paso{padding:22px 24px 8px 0}
-    .paso .n{font-family:'Space Grotesk',sans-serif;font-size:44px;font-weight:700;color:var(--verde-claro);line-height:1}
-    .paso h3{font-size:22px;margin:10px 0 6px;letter-spacing:-.02em}
-    .paso p{color:var(--suave);font-size:16px}
-    @media (max-width:760px){.pasos{grid-template-columns:minmax(0,1fr)} .paso{padding-right:0}}
+    .paso{padding:16px 22px 4px 0}
+    .paso .n{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--verde-claro);line-height:1}
+    .paso h3{font-size:17px;margin:6px 0 4px;letter-spacing:-.02em}
+    .paso p{color:var(--suave);font-size:14px}
+    @media (max-width:760px){.pasos{gap:10px} .paso{padding:12px 0 0} .paso .n{font-size:24px} .paso h3{font-size:14px;margin:4px 0 3px} .paso p{font-size:12px;line-height:1.4}}
 
     /* Terapias: filas tipográficas */
     .terapias{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px;border-top:1px solid var(--linea)}
     .terapia{border-bottom:1px solid var(--linea)}
-    .terapia button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:13px 8px;cursor:pointer}
+    .terapia button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:10px 8px;cursor:pointer}
     .terapia button:hover,.terapia button:focus-visible{background:var(--blanco)}
-    .terapia .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(17px,1.8vw,20px);letter-spacing:-.01em;color:var(--pino)}
-    .terapia .desc{grid-column:1/-1;color:var(--suave);font-size:14.5px;line-height:1.4}
-    .terapia .cuenta{font-weight:700;font-size:13px;color:var(--verde);white-space:nowrap;text-align:right}
+    .terapia .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--pino)}
+    .terapia .desc{grid-column:1/-1;color:var(--suave);font-size:13.5px;line-height:1.4}
+    .terapia .cuenta{grid-row:1;grid-column:2;font-weight:700;font-size:12px;color:var(--verde);white-space:nowrap;text-align:right}
     .terapia .cuenta:empty{display:none}
-    .aviso{margin-top:18px;font-size:14px;color:var(--suave);max-width:640px}
+    .aviso{margin-top:14px;font-size:12.5px;color:var(--suave);max-width:640px}
     @media (max-width:760px){.terapias{grid-template-columns:minmax(0,1fr)}}
 
     /* Especialistas */
-    .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
-    .chip{font-family:inherit;font-weight:600;font-size:14.5px;padding:9px 16px;border-radius:999px;border:1.5px solid var(--linea);background:var(--blanco);color:var(--tinta);cursor:pointer}
+    .filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+    .chip{font-family:inherit;font-weight:600;font-size:13px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--linea);background:var(--blanco);color:var(--tinta);cursor:pointer}
     .chip:hover{border-color:var(--verde)}
     .chip[aria-pressed="true"]{background:var(--pino);border-color:var(--pino);color:#fff}
     .sep{width:1px;background:var(--linea);margin:2px 6px}
-    .lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}
+    .lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
     @media (max-width:960px){.lista{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width:600px){.lista{grid-template-columns:minmax(0,1fr)}}
-    .esp{display:flex;flex-direction:column;gap:12px}
-    .arco{aspect-ratio:4/3.4;border-radius:999px 999px 0 0;background:var(--arena);overflow:hidden;display:flex;align-items:center;justify-content:center;width:62%}
+    @media (max-width:760px){
+      .lista{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;margin:0 -20px;padding:0 20px 10px;scroll-padding:0 20px;scrollbar-width:none}
+      .lista::-webkit-scrollbar{display:none}
+      .lista .esp{flex:0 0 calc((100% - 40px - 10px) / 2);scroll-snap-align:start;background:var(--blanco);border:1px solid var(--linea);border-radius:14px;padding:10px}
+      .lista .arco{width:70%;margin:0 auto}
+      .lista .esp h3{font-size:15px}
+      .lista .esp .rol{font-size:12px}
+      .lista .esp .bio{font-size:12.5px;-webkit-line-clamp:3}
+      .lista .esp .precio{font-size:12px}
+      .lista .esp .btn{align-self:stretch;text-align:center;padding:8px 6px;font-size:12px}
+      .guia{display:flex!important}
+    }
+    .guia{display:none;align-items:center;justify-content:center;gap:6px;margin-top:2px;font-size:12px;color:var(--suave)}
+    .guia i{width:6px;height:6px;border-radius:50%;background:var(--linea);display:block}
+    .guia i.on{background:var(--verde)}
+    .esp{display:flex;flex-direction:column;gap:9px}
+    .arco{aspect-ratio:4/3.4;border-radius:999px 999px 0 0;background:var(--arena);overflow:hidden;display:flex;align-items:center;justify-content:center;width:56%}
     .arco img{width:100%;height:100%;object-fit:cover;display:block}
-    .arco .ini{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:44px;color:var(--pino);opacity:.55}
-    .esp h3{font-size:23px;letter-spacing:-.02em}
-    .esp .rol{color:var(--verde);font-weight:600;font-size:15px;margin-top:-6px}
-    .esp .bio{color:var(--suave);font-size:15.5px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    .arco .ini{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:32px;color:var(--pino);opacity:.55}
+    .esp h3{font-size:18px;letter-spacing:-.02em}
+    .esp .rol{color:var(--verde);font-weight:600;font-size:13.5px;margin-top:-4px}
+    .esp .bio{color:var(--suave);font-size:14px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
     .esp .meta{display:flex;flex-wrap:wrap;gap:6px}
-    .etq{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--blanco);border:1px solid var(--linea);color:var(--tinta)}
-    .esp .precio{font-weight:600;font-size:15px}
+    .etq{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--blanco);border:1px solid var(--linea);color:var(--tinta)}
+    .esp .precio{font-weight:600;font-size:13.5px}
     .esp .btn{align-self:flex-start;margin-top:auto}
-    .vacio{background:var(--blanco);border:1px dashed #9DB8B3;border-radius:20px;padding:30px;max-width:640px}
-    .vacio h3{font-size:24px;margin-bottom:8px}
+    .vacio{background:var(--blanco);border:1px dashed #9DB8B3;border-radius:16px;padding:22px;max-width:600px}
+    .vacio h3{font-size:19px;margin-bottom:6px}
     .vacio p{color:var(--suave)}
-    .vacio .btn{margin-top:16px}
+    .vacio .btn{margin-top:12px}
 
     /* Nosotros */
     .nosotros{background:var(--pino);color:#D6E7E3}
     .nosotros h2,.nosotros h3{color:#fff}
-    .nosotros .cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px}
-    .nosotros .grande{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3.2vw,34px);line-height:1.2;letter-spacing:-.02em;color:#fff;margin-top:22px;max-width:560px}
-    .valores{display:grid;gap:22px;align-content:start}
-    .valor h3{font-size:20px;margin-bottom:4px;letter-spacing:-.01em}
-    .valor p{font-size:15.5px;color:#B7CFCA}
+    .nosotros .cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:40px}
+    .nosotros .grande{font-family:'Space Grotesk',sans-serif;font-size:clamp(18px,2.1vw,23px);line-height:1.3;letter-spacing:-.01em;color:#fff;margin-top:16px;max-width:540px}
+    .valores{display:grid;gap:16px;align-content:start}
+    .valor h3{font-size:16px;margin-bottom:3px;letter-spacing:-.01em}
+    .valor p{font-size:14px;color:#B7CFCA}
     .nosotros a{color:var(--lima)}
     @media (max-width:860px){.nosotros .cols{grid-template-columns:minmax(0,1fr);gap:30px}}
 
     /* Planes (escalera) */
-    .escalera{display:grid;gap:14px}
-    .escalon{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 20px;align-items:center;background:var(--blanco);border-left:8px solid var(--c);border-radius:0 18px 18px 0;padding:18px 22px;margin-left:calc(var(--i) * 5.5%);text-decoration:none}
+    .escalera{display:grid;gap:10px}
+    .escalon{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 20px;align-items:center;background:var(--blanco);border-left:8px solid var(--c);border-radius:0 14px 14px 0;padding:12px 18px;margin-left:calc(var(--i) * 5.5%);text-decoration:none}
     .escalon:hover{background:#F8FCFB}
-    .escalon .q{font-size:15px;color:var(--suave)}
-    .escalon .p{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:var(--pino);letter-spacing:-.02em;grid-row:1/3;grid-column:2;text-align:right;line-height:1.1}
-    .escalon .p small{display:block;font-size:13px;font-weight:500;color:var(--suave);letter-spacing:0}
-    .escalon .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:var(--pino);letter-spacing:-.02em}
-    .cierre{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .cierre p{color:var(--suave);font-size:15px}
+    .escalon .q{font-size:13.5px;color:var(--suave)}
+    .escalon .p{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;color:var(--pino);letter-spacing:-.02em;grid-row:1/3;grid-column:2;text-align:right;line-height:1.1}
+    .escalon .p small{display:block;font-size:11.5px;font-weight:400;color:var(--suave);letter-spacing:0}
+    .escalon .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:var(--pino);letter-spacing:-.02em}
+    .cierre{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .cierre p{color:var(--suave);font-size:13px}
     @media (max-width:760px){.escalon{margin-left:calc(var(--i) * 3%);grid-template-columns:minmax(0,1fr)} .escalon .p{grid-row:auto;grid-column:auto;text-align:left;margin-top:6px}}
 
     /* Preguntas */
     .preguntas{max-width:760px}
     details{border-bottom:1px solid var(--linea);padding:4px 0}
     details:first-of-type{border-top:1px solid var(--linea)}
-    summary{cursor:pointer;font-weight:600;font-size:18px;padding:16px 4px;list-style:none;display:flex;justify-content:space-between;gap:16px;color:var(--pino)}
+    summary{cursor:pointer;font-weight:600;font-size:15.5px;padding:12px 4px;list-style:none;display:flex;justify-content:space-between;gap:16px;color:var(--pino)}
     summary::-webkit-details-marker{display:none}
-    summary::after{content:"+";font-size:24px;line-height:1;color:var(--verde);flex:none}
+    summary::after{content:"+";font-size:20px;line-height:1;color:var(--verde);flex:none}
     details[open] summary::after{content:"\2212"}
-    details p{padding:0 4px 18px;color:var(--suave);font-size:16.5px;max-width:640px}
+    details p{padding:0 4px 14px;color:var(--suave);font-size:14.5px;max-width:640px}
 
-    footer{background:var(--pino);color:#B7CFCA;padding:38px 0;font-size:14.5px}
+    /* Barra para profesionales (solo celular) */
+    .cta{display:none}
+    @media (max-width:760px){
+      .cta{display:flex;position:fixed;left:10px;right:10px;bottom:10px;z-index:30;align-items:center;gap:10px;background:var(--pino);color:#fff;border-radius:16px;padding:10px 10px 10px 14px;box-shadow:0 8px 24px rgba(11,46,44,.35);transform:translateY(140%);transition:transform .25s ease}
+      .cta.ver{transform:none}
+      .cta p{flex:1;font-size:12.5px;line-height:1.3;color:#D6E7E3} .cta p b{display:block;color:#fff;font-size:13.5px}
+      .cta .btn{background:var(--lima);color:var(--pino);padding:9px 14px;font-size:13px;white-space:nowrap;border:0}
+      .cta button.x{all:unset;cursor:pointer;color:#9DB8B3;font-size:20px;line-height:1;padding:4px 6px}
+      body{padding-bottom:70px}
+    }
+    footer{background:var(--pino);color:#B7CFCA;padding:26px 0;font-size:13px}
     footer .wrap{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap}
     footer a{color:#fff}
-    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .puerta{animation:none} .btn{transition:none}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .puerta{animation:none} .btn,.cta{transition:none}}
   </style>
 </head>
 <body>
@@ -191,7 +231,7 @@
       </div>
     </section>
 
-    <section class="bloque" id="terapias" aria-labelledby="t-terapias" style="padding-top:24px">
+    <section class="bloque" id="terapias" aria-labelledby="t-terapias" style="padding-top:12px">
       <div class="wrap">
         <div class="titulo"><h2 id="t-terapias">Tipos de terapia</h2><p>No necesitas saber cuál es la tuya: elige la que te suene más cercana.</p></div>
         <ul class="terapias" id="terapias-lista"></ul>
@@ -199,12 +239,13 @@
       </div>
     </section>
 
-    <section class="bloque" id="especialistas" aria-labelledby="t-esp" style="padding-top:24px">
+    <section class="bloque" id="especialistas" aria-labelledby="t-esp" style="padding-top:12px">
       <div class="wrap">
         <div class="titulo"><h2 id="t-esp">Nuestros especialistas</h2><p id="esp-nota">Cada profesional eligió aparecer aquí y escribió su propia presentación.</p></div>
         <div class="filtros" id="filtros" role="group" aria-label="Filtrar especialistas" hidden></div>
         <p class="sr" id="esp-estado" role="status" aria-live="polite"></p>
         <div class="lista" id="esp-lista"></div>
+        <div class="guia" id="esp-guia" hidden aria-hidden="true"></div>
         <div class="vacio" id="esp-vacio" hidden>
           <h3 id="esp-vacio-t">Estamos sumando especialistas</h3>
           <p id="esp-vacio-p">Pronto verás aquí a los profesionales que atienden con nosotros. Si eres profesional y quieres aparecer, crea tu cuenta.</p>
@@ -246,9 +287,9 @@
       </div>
     </section>
 
-    <section class="bloque" id="preguntas" aria-labelledby="t-faq" style="padding-top:24px">
+    <section class="bloque" id="preguntas" aria-labelledby="t-faq" style="padding-top:12px">
       <div class="wrap preguntas">
-        <h2 id="t-faq" style="margin-bottom:26px">Preguntas frecuentes</h2>
+        <h2 id="t-faq" style="margin-bottom:18px">Preguntas frecuentes</h2>
         <details><summary>¿Cómo pago mi sesión?</summary><p>Pagas en línea al reservar, con Khipu. El pago llega directo al profesional y tu hora queda confirmada.</p></details>
         <details><summary>¿Puedo cancelar o cambiar mi hora?</summary><p>Sí, desde el enlace que te llega por correo. Cada profesional define cuántas horas antes se puede cambiar o cancelar (por defecto, 24). Pasado ese plazo, escríbele a tu profesional.</p></details>
         <details><summary>¿Cómo es una sesión online?</summary><p>Recibes el enlace por correo y te conectas a la hora acordada desde tu computador o celular.</p></details>
@@ -259,6 +300,12 @@
     </section>
   </main>
 
+  <aside class="cta" id="cta" aria-label="Para profesionales">
+    <p><b>¿Atiendes pacientes?</b>Agenda, cobros y equipo en un solo lugar.</p>
+    <a class="btn" href="#planes">Ver planes</a>
+    <button class="x" type="button" id="cta-x" aria-label="Cerrar">&times;</button>
+  </aside>
+
   <footer>
     <div class="wrap">
       <span>© prenobooking · Chile</span>
@@ -268,7 +315,6 @@
 
 <script>
   (function () {
-    var BASE = "https://script.google.com/macros/s/AKfycbyp-OnqB-PbDHUm3BFh0kzO8wcN6vhvcAfNRmUaJa5Fb-mYHR6t4c1rA061mxlM8GfN/exec";
     var TERAPIAS = [
       { id: "TCC", nombre: "Cognitivo-conductual", desc: "Relación entre lo que piensas, sientes y haces. Frecuente en ansiedad, ánimo y fobias." },
       { id: "Sistemica", nombre: "Sistémica y familiar", desc: "La persona dentro de su familia o pareja." },
@@ -350,13 +396,13 @@
       });
       var vacio = $("esp-vacio");
       if (!estado.cargado) { vacio.hidden = true; return; }
-      if (!estado.lista.length) { $("esp-vacio-t").textContent = "Estamos sumando especialistas"; vacio.hidden = false; $("esp-estado").textContent = ""; return; }
+      if (!estado.lista.length) { $("esp-vacio-t").textContent = "Estamos sumando especialistas"; $("esp-vacio-p").textContent = "Pronto verás aquí a los profesionales que atienden con nosotros. Si eres profesional y quieres aparecer, crea tu cuenta."; vacio.querySelector("a").hidden = false; vacio.hidden = false; $("esp-estado").textContent = ""; return; }
       if (!vis.length) {
         $("esp-vacio-t").textContent = "Nadie coincide con ese filtro por ahora";
         $("esp-vacio-p").textContent = "Prueba quitando un filtro para ver a todos los especialistas.";
         vacio.querySelector("a").hidden = true; vacio.hidden = false;
       } else { vacio.hidden = true; }
-      vis.forEach(function (e) { cont.appendChild(tarjeta(e)); });
+      var fr = document.createDocumentFragment(); vis.forEach(function (e) { fr.appendChild(tarjeta(e)); }); cont.appendChild(fr);
       $("esp-estado").textContent = plural(vis.length, "especialista disponible", "especialistas disponibles");
     }
 
@@ -364,38 +410,64 @@
     function limpio(e) {
       return e && typeof e.id === "string" && /^[A-Za-z0-9_.-]{3,120}$/.test(e.id) && typeof e.nombre === "string" && typeof e.bio === "string";
     }
+    // Última respuesta buena guardada en el navegador: la página aparece al instante y se actualiza al llegar la nueva.
+    function leer(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+    function guardar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    function aplicarDir(d) {
+      estado.lista = d.especialistas.filter(limpio); estado.conteos = {};
+      d.terapias.forEach(function (x) { if (NOMBRE[x.id] && typeof x.cantidad === "number") estado.conteos[x.id] = x.cantidad; });
+      estado.cargado = true; pintarTerapias(); pintarFiltros(); pintarEspecialistas();
+    }
+    function aplicarCfg(c) {
+      c.planes.forEach(function (p) {
+        if ((p.id === "esencial" || p.id === "profesional") && typeof p.neto === "number" && p.neto > 0 && p.neto < 10000000 && Math.floor(p.neto) === p.neto) $("h-" + p.id).textContent = pesos(p.neto);
+      });
+    }
+    // Puntos del carrusel de especialistas (celular)
+    function guiaCarrusel() {
+      var l = $("esp-lista"), g = $("esp-guia"); g.textContent = "";
+      var n = l.children.length, paginas = Math.ceil(n / 2);
+      if (paginas < 2) { g.hidden = true; return; }
+      g.hidden = false;
+      for (var i = 0; i < paginas; i++) g.appendChild(document.createElement("i"));
+      var marcar = function () {
+        var ancho = l.scrollWidth - l.clientWidth, p = ancho > 0 ? Math.round(l.scrollLeft / ancho * (paginas - 1)) : 0;
+        Array.prototype.forEach.call(g.children, function (d, k) { d.className = k === p ? "on" : ""; });
+      };
+      l.onscroll = marcar; marcar();
+    }
+    var pintarEsp0 = pintarEspecialistas;
+    pintarEspecialistas = function () { pintarEsp0(); guiaCarrusel(); };
+    // Barra "para profesionales": aparece al bajar y se esconde cuando ya estás viendo los planes
+    (function () {
+      var cta = $("cta"), cerrada = false, enPlanes = false;
+      try { cerrada = sessionStorage.getItem("pb_cta") === "1"; } catch (e) {}
+      function act() { cta.classList.toggle("ver", !cerrada && !enPlanes && window.scrollY > 420); }
+      $("cta-x").addEventListener("click", function () { cerrada = true; try { sessionStorage.setItem("pb_cta", "1"); } catch (e) {} act(); });
+      window.addEventListener("scroll", act, { passive: true });
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (en) { enPlanes = en[0].isIntersecting; act(); }, { threshold: 0.15 }).observe($("planes"));
+      }
+      act();
+    })();
     pintarTerapias();
-    try {
-      var ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, 8000);
-      fetch(BASE + "?action=directorio", { signal: ctl.signal, cache: "no-store", credentials: "omit" })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          clearTimeout(t);
-          if (!valido(d)) throw new Error("respuesta inesperada");
-          estado.lista = d.especialistas.filter(limpio);
-          d.terapias.forEach(function (x) { if (NOMBRE[x.id] && typeof x.cantidad === "number") estado.conteos[x.id] = x.cantidad; });
-          estado.cargado = true; pintarTerapias(); pintarFiltros(); pintarEspecialistas();
-        })
-        .catch(function () {
-          $("esp-vacio-t").textContent = "No pudimos cargar a los especialistas";
-          $("esp-vacio-p").textContent = "Revisa tu conexión y recarga la página. Si sigue igual, escríbenos a soporte@prenobooking.cl.";
-          $("esp-vacio").querySelector("a").hidden = true; $("esp-vacio").hidden = false;
-        });
-    } catch (e) {}
-
-    // Precios vigentes de Esencial y Profesional (los que ajustas desde tu panel). Si no responde, quedan los escritos arriba.
-    try {
-      var c2 = new AbortController(), t2 = setTimeout(function () { c2.abort(); }, 7000);
-      fetch(BASE + "?action=config", { signal: c2.signal, cache: "no-store", credentials: "omit" })
-        .then(function (r) { return r.json(); })
-        .then(function (c) {
-          clearTimeout(t2);
-          if (!c || c.ok !== true || !Array.isArray(c.planes)) return;
-          c.planes.forEach(function (p) {
-            if ((p.id === "esencial" || p.id === "profesional") && typeof p.neto === "number" && p.neto > 0 && p.neto < 10000000 && Math.floor(p.neto) === p.neto) $("h-" + p.id).textContent = pesos(p.neto);
-          });
-        }).catch(function () {});
-    } catch (e) {}
+    var P = window.__pb || {};
+    var cacheDir = leer("pb_dir"), cacheCfg = leer("pb_cfg");
+    if (valido(cacheDir)) aplicarDir(cacheDir);
+    if (cacheCfg && cacheCfg.ok === true && Array.isArray(cacheCfg.planes)) aplicarCfg(cacheCfg);
+    (P.dir || Promise.reject()).then(function (d) {
+      if (!valido(d)) throw new Error("respuesta inesperada");
+      guardar("pb_dir", d); aplicarDir(d);
+    }).catch(function () {
+      if (estado.cargado) return;
+      $("esp-vacio-t").textContent = "No pudimos cargar a los especialistas";
+      $("esp-vacio-p").textContent = "Revisa tu conexión y recarga la página. Si sigue igual, escríbenos a soporte@prenobooking.cl.";
+      $("esp-vacio").querySelector("a").hidden = true; $("esp-vacio").hidden = false;
+    });
+    (P.cfg || Promise.reject()).then(function (c) {
+      if (!c || c.ok !== true || !Array.isArray(c.planes)) return;
+      guardar("pb_cfg", c); aplicarCfg(c);
+    }).catch(function () {});
   })();
 </script>
 </body>
