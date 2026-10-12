@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel del Centro | PrenoBooking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    :root { --primary: #0D9488; --primary-tint: #DBF1EE; --primary-tint-strong: #9FDBD1; --primary-text: #FFFFFF; --bg: #f8fafc; }
+    .vh-safe { min-height: 100vh; min-height: 100dvh; }
+    .h-screen-safe { height: 100vh; height: 100dvh; }
+    @media (min-width: 768px) {
+      body.dashboard-body { height: 100vh; height: 100dvh; overflow: hidden; }
+      #main-scroll-area { height: 100vh; height: 100dvh; overflow-y: auto; }
+    }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #1e293b; margin: 0; }
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .sidebar-link.active { background-color: var(--primary-tint); color: var(--primary); font-weight: 800; border-right: 4px solid var(--primary); }
+    .cal-cell { aspect-ratio: 1 / 1; display: flex; flex-direction: column; justify-content: space-between; padding: 0.35rem 0.4rem; border: 1px solid #f1f5f9; background: white; transition: all 0.2s; cursor: pointer; border-radius: 0.75rem; overflow: hidden; min-width: 0; }
+    .cal-cell:hover:not(.disabled) { background-color: var(--primary-tint); border-color: var(--primary-tint-strong); transform: translateY(-1px); }
+    .cal-cell.today { border-color: var(--primary); background-color: var(--primary-tint); }
+    .cal-cell.selected { border-color: var(--primary); background-color: var(--primary-tint); box-shadow: 0 0 0 2px var(--primary-tint-strong); }
+    .cal-cell.disabled { opacity: 0.2; cursor: default; background: #f8fafc; border: none; }
+    .dot { width: 6px; height: 6px; border-radius: 999px; flex-shrink: 0; background: #8b5cf6; }
+    /* 16px: iOS Safari hace zoom al tocar campos con letra más chica. */
+    .form-input { width: 100%; padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 16px; font-weight: 600; outline: none; }
+    .form-input:focus { border-color: var(--primary); background: white; }
+    input[type="date"] { -webkit-appearance: none; appearance: none; }
+    .lbl { display: block; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .acc { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; }
+    .acc > summary { list-style: none; cursor: pointer; padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+    .acc > summary::-webkit-details-marker { display: none; }
+    .acc > summary:hover { background: #f8fafc; }
+    .acc[open] > summary { border-bottom: 1px solid #f1f5f9; }
+    .acc[open] .acc-chevron { transform: rotate(90deg); }
+    .acc-chevron { transition: transform .2s; color: #cbd5e1; flex-shrink: 0; }
+    .acc-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--primary); background: var(--primary-tint); }
+    .acc-title { font-weight: 800; color: #0f172a; font-size: 15px; }
+    .acc-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .acc-body { padding: 18px 20px 20px; }
+  </style>
+</head>
+<body class="dashboard-body vh-safe flex flex-col md:flex-row bg-slate-50 relative">
+
+  <!-- HEADER MÓVIL -->
+  <div class="md:hidden flex items-center justify-between bg-white border-b border-slate-200 p-4 sticky top-0 z-30 shadow-sm" style="padding-top: calc(1rem + env(safe-area-inset-top, 0px))">
+    <div class="flex items-center gap-3">
+      <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="4" y="4" width="56" height="56" rx="18" fill="var(--primary)"/>
+          <rect x="18" y="20" width="28" height="26" rx="6" fill="#ffffff"/>
+          <rect x="22.5" y="24.5" width="19" height="17" rx="3" fill="var(--primary)"/>
+          <rect x="23" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/>
+          <rect x="36" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/>
+          <circle cx="32" cy="34" r="4.5" fill="#B4F461"/>
+        </svg>
+      <span class="font-bold text-slate-900 tracking-tight font-display">Preno<span class="font-medium" style="color:var(--primary)">Booking</span></span>
+    </div>
+    <button onclick="toggleSidebar()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors" aria-label="Abrir menú">
+      <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+  </div>
+
+  <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden transition-opacity duration-300"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="fixed md:sticky top-0 left-0 h-screen-safe w-64 bg-white border-r border-slate-200 flex-shrink-0 z-50 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none">
+    <div>
+      <div class="p-6 flex items-center justify-between border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="4" y="4" width="56" height="56" rx="18" fill="var(--primary)"/>
+          <rect x="18" y="20" width="28" height="26" rx="6" fill="#ffffff"/>
+          <rect x="22.5" y="24.5" width="19" height="17" rx="3" fill="var(--primary)"/>
+          <rect x="23" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/>
+          <rect x="36" y="13" width="5" height="12" rx="2.5" fill="#ffffff"/>
+          <circle cx="32" cy="34" r="4.5" fill="#B4F461"/>
+        </svg>
+          <span class="text-xl font-bold text-slate-900 tracking-tight font-display">Preno<span class="font-medium" style="color:var(--primary)">Booking</span></span>
+        </div>
+        <button class="md:hidden text-slate-400 hover:text-slate-700 p-1" onclick="toggleSidebar()" aria-label="Cerrar menú"><i data-lucide="x"></i></button>
+      </div>
+      <div class="px-6 pt-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Panel del centro</p>
+        <p id="sidebar-centro" class="font-bold text-slate-700 text-sm truncate">&nbsp;</p>
+      </div>
+      <nav class="p-4 space-y-2">
+        <button onclick="showTab('agenda')" id="nav-agenda" class="sidebar-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-left"><i data-lucide="calendar"></i> Agenda</button>
+        <button onclick="showTab('metricas')" id="nav-metricas" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-left"><i data-lucide="pie-chart"></i> Métricas</button>
+        <button onclick="showTab('datos')" id="nav-datos" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-left"><i data-lucide="building-2"></i> Mis Datos</button>
+        <button onclick="showTab('plan')" id="nav-plan" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-left"><i data-lucide="credit-card"></i> Mi plan</button>
+        <button onclick="showTab('salas')" id="nav-salas" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-left"><i data-lucide="user-check"></i> Solicitudes de sala <span id="salas-n" class="hidden ml-auto text-[10px] font-black bg-amber-400 text-amber-950 rounded-full px-2 py-0.5">0</span></button>
+      </nav>
+    </div>
+    <div class="p-4 border-t border-slate-100" style="padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px))">
+      <button onclick="salir()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 font-medium hover:bg-red-50 transition-all text-left"><i data-lucide="log-out"></i> Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main id="main-scroll-area" class="flex-1 p-4 sm:p-6 md:p-12 overflow-y-auto w-full">
+    <!-- Aviso de plan: cuenta suspendida o con un pago pendiente -->
+    <div id="banner-plan" class="hidden mb-6"></div>
+
+
+    <!-- ============ AGENDA ============ -->
+    <section id="tab-agenda" class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div class="flex items-center justify-between w-full sm:w-auto gap-3">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Agenda</h2>
+          <button onclick="cargarMes(true)" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-slate-50 transition shadow-sm shrink-0" title="Refrescar agenda"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full sm:w-[600px]">
+          <div><label class="lbl" for="filtro-box">Box</label><select id="filtro-box" onchange="pintarTodo()" class="form-input py-2.5 bg-white"><option value="">Todos</option></select></div>
+          <div><label class="lbl" for="filtro-esp">Especialista</label><select id="filtro-esp" onchange="pintarTodo()" class="form-input py-2.5 bg-white"><option value="">Todos</option></select></div>
+          <div class="col-span-2 sm:col-span-1"><label class="lbl" for="filtro-pago">Pago</label>
+            <select id="filtro-pago" onchange="pintarTodo()" class="form-input py-2.5 bg-white">
+              <option value="">Todos</option><option value="pagado">Pagado</option><option value="pendiente_pago">Pendiente</option>
+              <option value="vencido">Vencido</option><option value="cubierto_pack">Cubierto por pack</option>
+              <option value="por">Por realizar / por cobrar</option><option value="sin_cobro">Sin cobro</option>
+            </select></div>
+        </div>
+      </div>
+
+      <div id="aviso-khipu" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-800">
+        <p class="font-black">Hay cobros detenidos: falta configurar tu Khipu</p>
+        <p class="mt-1"><span id="aviso-khipu-n"></span> Mientras no lo configures, no podemos enviarle el cobro a los especialistas ni recibir sus pagos.
+          <button onclick="showTab('datos')" class="underline font-black">Ir a Mis Datos</button></p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+        <div class="lg:col-span-5">
+          <div class="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+              <button onclick="cambiarMes(-1)" class="p-2 text-slate-400 hover:bg-slate-100 rounded-lg" aria-label="Mes anterior"><i data-lucide="chevron-left"></i></button>
+              <h3 id="cal-mes" class="text-lg sm:text-xl font-black text-slate-900">...</h3>
+              <button onclick="cambiarMes(1)" class="p-2 text-slate-400 hover:bg-slate-100 rounded-lg" aria-label="Mes siguiente"><i data-lucide="chevron-right"></i></button>
+            </div>
+            <div class="grid grid-cols-7 gap-1.5 sm:gap-2 mb-3 text-center text-[10px] font-black text-slate-300 uppercase">
+              <div>L</div><div>M</div><div>X</div><div>J</div><div>V</div><div>S</div><div>D</div>
+            </div>
+            <div id="cal-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm min-h-[400px]">
+            <div class="flex flex-wrap justify-between items-end mb-6 gap-2">
+              <div id="dia-titulo" class="text-lg font-black text-slate-900">...</div>
+              <div id="dia-conteo" class="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-bold text-slate-500 uppercase">0 sesiones</div>
+            </div>
+            <div class="hidden sm:block overflow-x-auto w-full pb-2">
+              <table class="w-full text-left">
+                <thead><tr class="text-[10px] font-black text-slate-400 uppercase border-b border-slate-100"><th class="pb-4 w-32">Horario</th><th class="pb-4">Especialista</th><th class="pb-4">Box</th><th class="pb-4 text-right">Pago</th></tr></thead>
+                <tbody id="dia-lista" class="divide-y divide-slate-50"></tbody>
+              </table>
+            </div>
+            <div id="dia-lista-mobile" class="sm:hidden space-y-2"></div>
+            <div id="dia-vacio" class="hidden py-24 text-center text-slate-300"><p class="text-xs font-bold">Sin sesiones este día</p></div>
+            <p class="text-[11px] text-slate-400 mt-6">Por privacidad, el centro no ve datos de los pacientes. El cobro de cada sesión se genera una hora después de terminar; los pagos de los especialistas llegan directo a tu cuenta Khipu.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MÉTRICAS ============ -->
+    <section id="tab-metricas" class="hidden space-y-6 lg:space-y-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Métricas del Mes</h2>
+          <p class="text-slate-500 text-sm mt-1 font-medium">Reservas, cancelaciones y cobros de <span id="met-mes-nombre" class="font-bold"></span>, en todos tus boxes.</p>
+        </div>
+        <div class="flex gap-2 w-full sm:w-auto">
+          <button onclick="cambiarMes(-1)" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-slate-50 shadow-sm" aria-label="Mes anterior"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+          <button onclick="cambiarMes(1)" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-slate-50 shadow-sm" aria-label="Mes siguiente"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+          <button onclick="cargarMetricas(true)" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-slate-50 shadow-sm" title="Actualizar métricas"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+        </div>
+      </div>
+
+      <div id="met-cargando" class="hidden text-center text-sm text-slate-400 py-10">Calculando métricas...</div>
+      <div id="met-contenido" class="space-y-6 lg:space-y-8">
+        <div>
+          <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-3">Operación</h3>
+          <div id="met-operacion" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
+        </div>
+        <div>
+          <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-3">Cobros por uso de boxes</h3>
+          <div id="met-cobros" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
+        </div>
+        <div id="met-packs" class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <h3 class="font-black text-slate-900 mb-4">Uso por box</h3>
+            <div id="met-boxes" class="space-y-3"></div>
+          </div>
+          <div class="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <h3 class="font-black text-slate-900 mb-4">Sesiones por especialista</h3>
+            <div id="met-esps" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 class="font-black text-slate-900 mb-1">Cobros por especialista</h3>
+          <p class="text-xs text-slate-400 mb-4">Sesiones del mes y estado de lo que cada especialista te debe o ya pagó.</p>
+          <div class="overflow-x-auto"><table class="w-full text-left text-sm">
+            <thead><tr class="text-[10px] font-black text-slate-400 uppercase border-b border-slate-100">
+              <th class="pb-3">Especialista</th><th class="pb-3 text-right">Sesiones</th><th class="pb-3 text-right">Pagado</th><th class="pb-3 text-right">Pendiente</th><th class="pb-3 text-right">Vencido</th></tr></thead>
+            <tbody id="met-tabla-esp" class="divide-y divide-slate-50"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MIS DATOS ============ -->
+    <!-- ============ MI PLAN ============ -->
+    <section id="tab-plan" class="hidden space-y-5">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Mi plan</h2>
+        <p class="text-slate-500 text-sm mt-1 font-medium">Tu plan Espacio, tus cobros y en qué estado están.</p>
+      </div>
+      <div id="plan-contenido" class="space-y-5"></div>
+    </section>
+
+    <section id="tab-salas" class="hidden space-y-5">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Solicitudes de sala</h2>
+        <p class="text-slate-500 text-sm mt-1 font-medium">Profesionales que pidieron atender en tus salas. Hasta que apruebes, no se ofrecen horarios presenciales con tu centro.</p>
+      </div>
+      <div id="salas-contenido" class="space-y-3"></div>
+    </section>
+
+    <section id="tab-datos" class="hidden space-y-5">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Mis Datos</h2>
+        <button onclick="guardarDatos()" class="w-full sm:w-auto bg-[var(--primary)] text-[var(--primary-text)] px-6 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-slate-300/40"><i data-lucide="save" class="w-4 h-4"></i> Guardar cambios</button>
+      </div>
+
+      <details class="acc" open>
+        <summary>
+          <div class="acc-icon"><i data-lucide="building-2" class="w-4 h-4"></i></div>
+          <div class="flex-1 min-w-0"><p class="acc-title">Datos del centro</p><p class="acc-sub" id="sub-datos">&nbsp;</p></div>
+          <i data-lucide="chevron-right" class="acc-chevron w-5 h-5"></i>
+        </summary>
+        <div class="acc-body space-y-3">
+          <div><label class="lbl" for="d-name">Nombre</label><input id="d-name" class="form-input"></div>
+          <div><label class="lbl" for="d-address">Dirección</label><input id="d-address" class="form-input"></div>
+          <div><label class="lbl" for="d-email">Correo de contacto</label><input id="d-email" type="email" class="form-input"></div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>
+          <div class="acc-icon"><i data-lucide="credit-card" class="w-4 h-4"></i></div>
+          <div class="flex-1 min-w-0"><p class="acc-title">Cobros con Khipu</p><p class="acc-sub" id="sub-khipu">&nbsp;</p></div>
+          <i data-lucide="chevron-right" class="acc-chevron w-5 h-5"></i>
+        </summary>
+        <div class="acc-body space-y-3">
+          <p class="text-xs text-slate-500">Cuenta donde recibirás los pagos de los especialistas por el uso de tus boxes y la compra de packs.</p>
+          <div><label class="lbl" for="d-kapi">Receiver ID / API Key</label><input id="d-kapi" class="form-input" autocomplete="off"></div>
+          <div><label class="lbl" for="d-ksec">Secret</label><input id="d-ksec" type="password" class="form-input" autocomplete="new-password"></div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>
+          <div class="acc-icon"><i data-lucide="door-open" class="w-4 h-4"></i></div>
+          <div class="flex-1 min-w-0"><p class="acc-title">Boxes</p><p class="acc-sub" id="sub-boxes">&nbsp;</p></div>
+          <i data-lucide="chevron-right" class="acc-chevron w-5 h-5"></i>
+        </summary>
+        <div class="acc-body">
+          <div id="lista-boxes"></div>
+          <button onclick="formBox()" class="mt-3 w-full py-2.5 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 font-bold text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors">+ Nuevo box</button>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>
+          <div class="acc-icon"><i data-lucide="package" class="w-4 h-4"></i></div>
+          <div class="flex-1 min-w-0"><p class="acc-title">Packs de sesiones</p><p class="acc-sub" id="sub-packs">&nbsp;</p></div>
+          <i data-lucide="chevron-right" class="acc-chevron w-5 h-5"></i>
+        </summary>
+        <div class="acc-body">
+          <p class="text-[11px] text-slate-400 mb-2">Un pack sirve para cualquier box de tu centro, según disponibilidad, y no vence: dura hasta agotar sus sesiones.</p>
+          <div id="lista-packs"></div>
+          <button onclick="formPack()" class="mt-3 w-full py-2.5 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 font-bold text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors">+ Nuevo pack</button>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const LOGIN_URL = "<?= typeof PUBLIC_BASE_LOGIN !== 'undefined' ? PUBLIC_BASE_LOGIN : PUBLIC_BASE ?>";
+    const TOKEN = sessionStorage.getItem('pb_token');
+    if (!TOKEN) document.addEventListener('DOMContentLoaded', () => irLogin());
+
+    let PANEL = null;                       // datos, boxes y packs del centro
+    let MES = new Date(); MES.setDate(1); MES.setHours(0, 0, 0, 0);
+    let DIA = new Date(); DIA.setHours(0, 0, 0, 0);
+    const CACHE_MES = {};                   // "yyyy-mm" -> sesiones de ese mes
+    const CACHE_METRICAS = {};              // "yyyy-mm" -> métricas de ese mes
+    let CARGOS_SIN_KHIPU = 0;
+    // Cómo se ve cada estado de pago de una sesión: [texto, clases del chip, color del punto del calendario]
+    const ESTADO_PAGO = {
+      por_realizar:   ['Por realizar',      'bg-slate-100 text-slate-500',   '#8b5cf6'],
+      por_cobrar:     ['Por cobrar',        'bg-sky-50 text-sky-700',        '#8b5cf6'],
+      pendiente_pago: ['Pendiente',         'bg-amber-50 text-amber-700',    '#f59e0b'],
+      vencido:        ['Vencido',           'bg-red-50 text-red-700',        '#ef4444'],
+      pagado:         ['Pagado',            'bg-emerald-50 text-emerald-700','#10b981'],
+      cubierto_pack:  ['Cubierto por pack', 'bg-emerald-50 text-emerald-700','#10b981'],
+      sin_khipu:      ['Falta tu Khipu',    'bg-amber-50 text-amber-700',    '#f59e0b'],
+      sin_cobro:      ['Sin cobro',         'bg-slate-100 text-slate-500',   '#8b5cf6']
+    };
+    let SESIONES = [];                      // sesiones del mes visible
+
+    // ---------- utilidades ----------
+    function esc(t) { const d = document.createElement('div'); d.textContent = (t === null || t === undefined) ? '' : String(t); return d.innerHTML; }
+    function escA(t) { return esc(t).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    function pesos(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
+    function claveDia(d) { const x = new Date(d); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); }
+    function claveMes(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+    function hhmm(d) { return new Date(d).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }); }
+    // Mayúscula solo a la primera letra ("septiembre de 2026" -> "Septiembre de 2026").
+    // La clase CSS capitalize ponía mayúscula a cada palabra: "Septiembre De 2026".
+    function primeraMayus(t) { return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
+    function nombreMes(d) { return primeraMayus(new Intl.DateTimeFormat('es-CL', { month: 'long', year: 'numeric' }).format(d)); }
+
+    // Igual que irATop_ del Dashboard: un formulario con target _top es la
+    // forma que el sandbox de Apps Script permite para salir del iframe
+    // (window.top.location puede quedar bloqueado en silencio).
+    function irLogin() {
+      sessionStorage.removeItem('pb_token');
+      const form = document.createElement('form');
+      form.method = 'GET'; form.action = LOGIN_URL; form.target = '_top';
+      document.body.appendChild(form);
+      form.submit();
+    }
+    function esSesionInvalida(msg) { return /Sesión expirada|Acceso denegado/i.test(String(msg || '')); }
+
+    // Llamada al servidor que nunca deja la pantalla congelada: avisa si la
+    // función no existe en la versión publicada o si no responde en 45 s.
+    function llamar(fn, args, onOk) {
+      let listo = false;
+      const vigia = setTimeout(() => { if (!listo) Swal.fire('Sin respuesta del servidor', 'La operación lleva más de 45 segundos sin responder. Intenta de nuevo en un momento.', 'warning'); }, 45000);
+      const fin = () => { listo = true; clearTimeout(vigia); };
+      try {
+        const run = google.script.run
+          .withSuccessHandler(res => {
+            fin();
+            if (res && res.ok === false) {
+              if (esSesionInvalida(res.message)) return irLogin();
+              return Swal.fire('Error', res.message || 'No se pudo completar.', 'error');
+            }
+            onOk(res);
+          })
+          .withFailureHandler(err => {
+            fin();
+            const msg = (err && err.message) || String(err || '');
+            if (esSesionInvalida(msg)) return irLogin();
+            Swal.fire('Error', 'Ocurrió un problema: ' + msg, 'error');
+          });
+        if (typeof run[fn] !== 'function') throw new Error('La función "' + fn + '" no existe en la versión publicada del servidor.');
+        run[fn].apply(run, args);
+      } catch (e) { fin(); Swal.fire('Error', e.message, 'error'); }
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('-translate-x-full');
+      document.getElementById('sidebar-overlay').classList.toggle('hidden');
+    }
+
+    function showTab(tab) {
+      ['agenda', 'metricas', 'datos', 'plan', 'salas'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('hidden', tab !== t);
+        document.getElementById('nav-' + t).classList.toggle('active', tab === t);
+      });
+      // En celular, elegir una sección cierra el menú
+      if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleSidebar();
+      if (tab === 'metricas') cargarMetricas(false);
+      if (tab === 'plan') cargarPlan();
+      if (tab === 'salas') cargarSolicitudesSala();
+    }
+
+    // ---- Solicitudes de sala: tú decides quién usa tus boxes ----
+    function cargarSolicitudesSala(silencioso) {
+      llamar('listarSolicitudesSala', [TOKEN], r => {
+        const n = document.getElementById('salas-n'); n.textContent = r.pendientes.length; n.classList.toggle('hidden', !(r.pendientes.length > 0));
+        if (silencioso) return;
+        const cont = document.getElementById('salas-contenido');
+        const fila = (x, botones) => `<div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="min-w-0"><p class="font-black text-slate-800 break-words">${esc(x.nombre)}</p><p class="text-xs text-slate-500">${esc(x.especialidad)}</p></div>
+          <div class="flex gap-2 shrink-0">${botones}</div></div>`;
+        const ok = x => `<button data-sala="${escA(x.id)}" data-dec="aprobada" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700">Aprobar</button>`;
+        const no = x => `<button data-sala="${escA(x.id)}" data-dec="rechazada" class="px-4 py-2 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50">Rechazar</button>`;
+        let h = r.pendientes.length ? r.pendientes.map(x => fila(x, ok(x) + no(x))).join('') : '<div class="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400 font-semibold">No hay solicitudes pendientes.</div>';
+        if (r.decididas.length) h += `<details class="bg-white border border-slate-200 rounded-2xl p-4"><summary class="cursor-pointer text-sm font-bold text-slate-500">Ya decididas (${r.decididas.length})</summary><div class="mt-3 space-y-2">` +
+          r.decididas.map(x => `<div class="flex items-center justify-between gap-3 text-sm border-t border-slate-100 pt-2"><span><b class="text-slate-700">${esc(x.nombre)}</b> <span class="${x.estado === 'aprobada' ? 'text-emerald-600' : 'text-red-500'} font-black uppercase text-[10px]">${x.estado === 'aprobada' ? 'Aprobada' : 'Rechazada'}</span></span>
+            ${x.estado === 'aprobada' ? no(x) : ok(x)}</div>`).join('') + '</div></details>';
+        cont.innerHTML = h;
+      });
+    }
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-sala]'); if (!b) return;
+      const id = b.dataset.sala, dec = b.dataset.dec;
+      if (!/^[A-Za-z0-9_.@-]{3,120}$/.test(id) || (dec !== 'aprobada' && dec !== 'rechazada')) return;
+      Swal.fire({ title: dec === 'aprobada' ? '¿Aprobar?' : '¿Rechazar?', text: dec === 'aprobada' ? 'Podrá recibir reservas presenciales en tus salas.' : 'Dejará de recibir reservas presenciales en tus salas. Se le avisa por correo.',
+        icon: 'question', showCancelButton: true, confirmButtonText: 'Sí', cancelButtonText: 'Cancelar', confirmButtonColor: dec === 'aprobada' ? '#059669' : '#dc2626' }).then(r => {
+        if (!r.isConfirmed) return;
+        llamar('decidirSolicitudSala', [TOKEN, id, dec], () => { Swal.fire({ icon: 'success', title: 'Listo', timer: 1000, showConfirmButton: false }); cargarSolicitudesSala(); });
+      });
+    });
+
+    function salir() {
+      try { google.script.run.withSuccessHandler(() => {}).withFailureHandler(() => {}).cerrarSesion(TOKEN); } catch (e) {}
+      irLogin();
+    }
+
+    // ---------- datos del mes ----------
+    function cambiarMes(delta) {
+      MES = new Date(MES.getFullYear(), MES.getMonth() + delta, 1);
+      const hoy = new Date();
+      DIA = (MES.getFullYear() === hoy.getFullYear() && MES.getMonth() === hoy.getMonth()) ? new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()) : new Date(MES);
+      cargarMes(false);
+      if (!document.getElementById('tab-metricas').classList.contains('hidden')) cargarMetricas(false);
+    }
+
+    function cargarMes(forzar) {
+      const k = claveMes(MES);
+      if (forzar) delete CACHE_METRICAS[k];   // al refrescar, también se recalculan las métricas
+      if (!forzar && CACHE_MES[k]) { SESIONES = CACHE_MES[k]; poblarFiltros(); pintarTodo(); return; }
+      document.getElementById('cal-mes').innerText = nombreMes(MES);
+      const fin = new Date(MES.getFullYear(), MES.getMonth() + 1, 1);
+      llamar('obtenerAgendaCentro', [TOKEN, MES.toISOString(), fin.toISOString()], res => {
+        CACHE_MES[k] = res.sesiones || [];
+        CARGOS_SIN_KHIPU = res.cargosSinKhipu || 0;
+        SESIONES = CACHE_MES[k];
+        poblarFiltros();
+        pintarTodo();
+      });
+    }
+
+    function filtradas() {
+      const fb = document.getElementById('filtro-box').value, fe = document.getElementById('filtro-esp').value, fp = document.getElementById('filtro-pago').value;
+      return SESIONES.filter(s => (!fb || s.boxId === fb) && (!fe || s.specialistId === fe) &&
+        (!fp || (fp === 'por' ? (s.estadoPago === 'por_realizar' || s.estadoPago === 'por_cobrar') : s.estadoPago === fp)));
+    }
+
+    function poblarFiltros() {
+      const sb = document.getElementById('filtro-box'), se = document.getElementById('filtro-esp');
+      const vb = sb.value, ve = se.value;
+      const boxes = {}; (PANEL ? PANEL.boxes : []).forEach(b => boxes[b.id] = b.name);
+      SESIONES.forEach(s => { if (s.boxId && !boxes[s.boxId]) boxes[s.boxId] = s.boxName; });
+      const esps = {}; SESIONES.forEach(s => esps[s.specialistId] = s.especialista);
+      sb.innerHTML = '<option value="">Todos</option>' + Object.keys(boxes).map(id => `<option value="${escA(id)}">${esc(boxes[id])}</option>`).join('');
+      se.innerHTML = '<option value="">Todos</option>' + Object.keys(esps).map(id => `<option value="${escA(id)}">${esc(esps[id])}</option>`).join('');
+      if ([...sb.options].some(o => o.value === vb)) sb.value = vb;
+      if ([...se.options].some(o => o.value === ve)) se.value = ve;
+    }
+
+    function pintarTodo() {
+      const av = document.getElementById('aviso-khipu');
+      av.classList.toggle('hidden', !CARGOS_SIN_KHIPU);
+      document.getElementById('aviso-khipu-n').innerText = CARGOS_SIN_KHIPU === 1 ? 'Hay 1 sesión esperando su cobro.' : 'Hay ' + CARGOS_SIN_KHIPU + ' sesiones esperando su cobro.';
+      pintarCalendario(); pintarDia();
+    }
+
+    // ---------- calendario (L a D) ----------
+    function pintarCalendario() {
+      const grid = document.getElementById('cal-grid');
+      document.getElementById('cal-mes').innerText = nombreMes(MES);
+      grid.innerHTML = '';
+      const anio = MES.getFullYear(), mes = MES.getMonth();
+      const offset = (new Date(anio, mes, 1).getDay() + 6) % 7; // lunes = 0
+      for (let e = 0; e < offset; e++) { const v = document.createElement('div'); v.className = 'cal-cell disabled'; grid.appendChild(v); }
+
+      const porDia = {}, estadosDia = {};
+      filtradas().forEach(s => { const k = claveDia(s.start); porDia[k] = (porDia[k] || 0) + 1; (estadosDia[k] = estadosDia[k] || []).push(s.estadoPago); });
+      // Los días con algo vencido o pendiente muestran esos puntos primero.
+      const prioridad = { vencido: 0, sin_khipu: 1, pendiente_pago: 1, por_cobrar: 2 };
+      const ultimo = new Date(anio, mes + 1, 0).getDate();
+      const hoyK = claveDia(new Date()), selK = claveDia(DIA);
+      for (let i = 1; i <= ultimo; i++) {
+        const d = new Date(anio, mes, i), k = claveDia(d), n = porDia[k] || 0;
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell ' + (k === selK ? 'selected ' : '') + (k === hoyK ? 'today' : '');
+        cell.dataset.dia = k;
+        const orden = (estadosDia[k] || []).slice().sort((a, b) => (prioridad[a] ?? 9) - (prioridad[b] ?? 9));
+        const puntos = orden.slice(0, 3).map(e => `<span class="dot" style="background:${(ESTADO_PAGO[e] || ESTADO_PAGO.sin_cobro)[2]}"></span>`).join('') + (n > 3 ? '<span class="text-[8px] font-black text-violet-500 leading-none">+' + (n - 3) + '</span>' : '');
+        cell.title = n ? n + (n === 1 ? ' sesión' : ' sesiones') : '';
+        cell.innerHTML = `<div class="text-xs sm:text-sm font-black text-slate-800">${i}</div><div class="flex flex-nowrap items-center gap-0.5 sm:gap-1 h-2">${puntos}</div>`;
+        cell.onclick = () => { DIA = d; pintarCalendario(); pintarDia(); };
+        grid.appendChild(cell);
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ---------- detalle del día ----------
+    function pintarDia() {
+      const k = claveDia(DIA);
+      const lista = filtradas().filter(s => claveDia(s.start) === k).sort((a, b) => new Date(a.start) - new Date(b.start));
+      document.getElementById('dia-titulo').innerText = primeraMayus(DIA.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }));
+      document.getElementById('dia-conteo').innerText = lista.length + (lista.length === 1 ? ' sesión' : ' sesiones');
+      const tb = document.getElementById('dia-lista'), mob = document.getElementById('dia-lista-mobile');
+      document.getElementById('dia-vacio').classList.toggle('hidden', lista.length > 0);
+      const chipBox = s => `<span class="text-[11px] font-bold text-violet-700 bg-violet-50 rounded-full px-2.5 py-1 whitespace-nowrap">${esc(s.boxName || 'Sin box')}</span>`;
+      const chipPago = s => { const [txt, clase] = ESTADO_PAGO[s.estadoPago] || ESTADO_PAGO.sin_cobro;
+        return `<span class="text-[10px] font-black uppercase rounded-full px-2.5 py-1 whitespace-nowrap ${clase}">${txt}</span>`; };
+      const monto = s => (s.estadoPago === 'sin_cobro' || !s.monto) ? '' : `<span class="block text-xs font-bold text-slate-500 mt-1">${pesos(s.monto)}</span>`;
+      tb.innerHTML = lista.map(s => `<tr class="hover:bg-slate-50/50">
+          <td class="py-4 text-xs font-black text-slate-900 whitespace-nowrap">${hhmm(s.start)}–${hhmm(s.end)}</td>
+          <td class="py-4 text-sm font-semibold text-slate-700">${esc(s.especialista)}</td>
+          <td class="py-4">${chipBox(s)}</td>
+          <td class="py-4 text-right">${chipPago(s)}${monto(s)}</td></tr>`).join('');
+      mob.innerHTML = lista.map(s => `<div class="border border-slate-100 rounded-2xl p-3.5">
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0"><p class="text-[11px] font-black text-slate-900">${hhmm(s.start)}–${hhmm(s.end)}</p>
+            <p class="text-sm font-semibold text-slate-700 truncate">${esc(s.especialista)}</p></div>${chipBox(s)}</div>
+          <div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-slate-50">${chipPago(s)}<span class="text-xs font-bold text-slate-500">${(s.estadoPago === 'sin_cobro' || !s.monto) ? '' : pesos(s.monto)}</span></div></div>`).join('');
+    }
+
+    // ---------- métricas (se calculan en el servidor) ----------
+    function cargarMetricas(forzar) {
+      const k = claveMes(MES);
+      document.getElementById('met-mes-nombre').innerText = nombreMes(MES);
+      if (!forzar && CACHE_METRICAS[k]) { pintarMetricas(CACHE_METRICAS[k]); return; }
+      document.getElementById('met-cargando').classList.remove('hidden');
+      document.getElementById('met-contenido').classList.add('opacity-40');
+      const fin = new Date(MES.getFullYear(), MES.getMonth() + 1, 1);
+      llamar('obtenerMetricasCentro', [TOKEN, MES.toISOString(), fin.toISOString()], res => {
+        CACHE_METRICAS[k] = res;
+        // Si mientras tanto cambió de mes, no se pinta un mes que ya no es el visible
+        if (claveMes(MES) === k) pintarMetricas(res);
+      });
+    }
+
+    function pct(x) { return (Math.round(x * 1000) / 10).toLocaleString('es-CL') + '%'; }
+
+    function pintarMetricas(m) {
+      document.getElementById('met-cargando').classList.add('hidden');
+      document.getElementById('met-contenido').classList.remove('opacity-40');
+      const op = m.operacion, co = m.cobros, pk = m.packs;
+      const kpi = (titulo, valor, icono, tono, nota) => `<div class="bg-white p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-start"><p class="text-[10px] font-black uppercase text-slate-400">${titulo}</p>
+          <div class="p-1.5 sm:p-2 ${tono} rounded-lg sm:rounded-xl shrink-0"><i data-lucide="${icono}" class="w-4 h-4 sm:w-5 sm:h-5"></i></div></div>
+          <h3 class="text-lg sm:text-2xl font-black text-slate-800 mt-1">${valor}</h3>
+          ${nota ? `<p class="text-[11px] text-slate-400 mt-0.5">${nota}</p>` : ''}</div>`;
+      const violeta = 'bg-violet-50 text-violet-600', verde = 'bg-emerald-50 text-emerald-600', ambar = 'bg-amber-50 text-amber-600', rojo = 'bg-red-50 text-red-600';
+
+      document.getElementById('met-operacion').innerHTML =
+        kpi('Reservas', op.reservas, 'calendar-check', violeta, op.porRealizar + ' por realizar · ' + op.realizadas + ' realizadas') +
+        kpi('Canceladas', op.canceladas, 'calendar-x', op.canceladas ? ambar : violeta, 'Tasa de cancelación: ' + pct(op.tasaCancelacion)) +
+        kpi('Horas reservadas', op.horas, 'clock', violeta, '') +
+        kpi('Especialistas', op.especialistas, 'users', violeta, 'con sesiones este mes');
+      document.getElementById('met-cobros').innerHTML =
+        kpi('Cobrado', pesos(co.cobrado), 'badge-check', verde, 'pagos ya recibidos') +
+        kpi('Por cobrar', pesos(co.porCobrar), 'hourglass', ambar, 'aún sin pagar, dentro del plazo') +
+        kpi('Vencido', pesos(co.vencido), 'alert-triangle', co.vencido ? rojo : violeta, co.vencidosN + (co.vencidosN === 1 ? ' cobro' : ' cobros') + ' · impago ' + pct(co.tasaImpago)) +
+        kpi('Packs vendidos', pesos(pk.vendidosMonto), 'package', violeta, pk.vendidosN + (pk.vendidosN === 1 ? ' pack' : ' packs') + ' este mes');
+      const tarjeta = (titulo, valor, detalle) => `<div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+          <p class="text-[10px] font-black uppercase text-slate-400">${titulo}</p>
+          <p class="text-xl font-black text-slate-800 mt-1">${valor}</p><p class="text-xs text-slate-400 mt-1">${detalle}</p></div>`;
+      document.getElementById('met-packs').innerHTML =
+        tarjeta('Sesiones cubiertas por packs', co.packUsosN + (co.packUsosN === 1 ? ' sesión' : ' sesiones') + ' · ' + pesos(co.packUsosValor),
+          'Sesiones de este mes que se descontaron de un pack: el pago ya lo recibiste cuando se vendió el pack.') +
+        tarjeta('Saldo de packs sin usar (hoy)', pk.saldoSesiones + (pk.saldoSesiones === 1 ? ' sesión' : ' sesiones') + ' · ' + pesos(pk.saldoValor),
+          'Sesiones ya pagadas que tus clientes todavía pueden usar en tus boxes. No es ganancia aún: es servicio por entregar.');
+
+      const barras = (filas, nombreDe, valorDe, sufijo) => {
+        if (!filas.length) return '<p class="text-sm text-slate-400">Sin sesiones este mes.</p>';
+        const max = Math.max.apply(null, filas.map(valorDe)), total = filas.reduce((a, f) => a + valorDe(f), 0);
+        return filas.map(f => `<div>
+            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700 truncate pr-2">${esc(nombreDe(f))}</span><span class="font-black text-slate-800">${valorDe(f)}${sufijo} <span class="text-slate-400 font-medium text-xs">(${Math.round(valorDe(f) * 100 / total)}%)</span></span></div>
+            <div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-2 rounded-full bg-violet-500" style="width:${Math.round(valorDe(f) * 100 / max)}%"></div></div></div>`).join('');
+      };
+      document.getElementById('met-boxes').innerHTML = barras(m.porBox, f => f.nombre, f => f.sesiones, '');
+      const conSesiones = m.porEspecialista.filter(e => e.sesiones > 0);
+      document.getElementById('met-esps').innerHTML = barras(conSesiones, f => f.nombre, f => f.sesiones, '');
+
+      const tb = document.getElementById('met-tabla-esp');
+      tb.innerHTML = m.porEspecialista.length ? m.porEspecialista.map(e => `<tr>
+          <td class="py-3 font-semibold text-slate-700">${esc(e.nombre)}</td>
+          <td class="py-3 text-right text-slate-600">${e.sesiones}</td>
+          <td class="py-3 text-right text-slate-600">${e.pagado ? pesos(e.pagado) : '—'}</td>
+          <td class="py-3 text-right ${e.pendiente ? 'text-amber-600 font-bold' : 'text-slate-400'}">${e.pendiente ? pesos(e.pendiente) : '—'}</td>
+          <td class="py-3 text-right ${e.vencido ? 'text-red-600 font-black' : 'text-slate-400'}">${e.vencido ? pesos(e.vencido) : '—'}</td></tr>`).join('')
+        : '<tr><td colspan="5" class="py-4 text-sm text-slate-400">Sin movimientos este mes.</td></tr>';
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ---------- MIS DATOS ----------
+    function cargarPanel(despues) {
+      llamar('obtenerPanelCentro', [TOKEN], r => {
+        PANEL = r;
+        const c = r.centro;
+        pintarBannerPlan_(c.estadoCobro);   // aviso si el centro está suspendido o con un pago pendiente
+        document.getElementById('sidebar-centro').innerText = c.name || 'Centro';
+        document.getElementById('d-name').value = c.name;
+        document.getElementById('d-address').value = c.address;
+        document.getElementById('d-email').value = c.contactEmail;
+        document.getElementById('sub-datos').innerText = [c.name, c.address].filter(Boolean).join(' · ') || 'Nombre, dirección y contacto';
+        document.getElementById('d-kapi').value = c.khipuApiKey;
+        document.getElementById('d-ksec').value = '';
+        document.getElementById('d-ksec').placeholder = c.khipuConfigurado ? '•••••• (guardado — escribe solo si quieres cambiarlo)' : 'Pega aquí tu secret de Khipu';
+        const sk = document.getElementById('sub-khipu');
+        sk.innerText = c.khipuConfigurado ? '✓ Configurado' : 'Falta configurar: sin esto no podrás recibir pagos';
+        sk.className = 'acc-sub ' + (c.khipuConfigurado ? '!text-emerald-600' : '!text-amber-600');
+        pintarBoxes(); pintarPacks();
+        if (despues) despues();
+      });
+    }
+
+    function guardarDatos() {
+      const datos = {
+        name: document.getElementById('d-name').value.trim(),
+        address: document.getElementById('d-address').value.trim(),
+        contactEmail: document.getElementById('d-email').value.trim(),
+        khipuApiKey: document.getElementById('d-kapi').value.trim(),
+        khipuSecret: document.getElementById('d-ksec').value.trim()
+      };
+      if (!datos.name) return Swal.fire('Falta el nombre', 'El nombre del centro es obligatorio.', 'warning');
+      Swal.fire({ title: 'Guardando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      llamar('actualizarDatosCentro', [TOKEN, datos], () => {
+        Swal.fire({ icon: 'success', title: 'Guardado', timer: 1200, showConfirmButton: false });
+        cargarPanel();
+      });
+    }
+
+    function filaItem(titulo, sub, activo, onclick) {
+      return `<div class="flex items-center justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
+        <div class="min-w-0"><p class="font-bold text-sm text-slate-800 ${activo ? '' : 'line-through text-slate-400'}">${titulo}
+          ${activo ? '' : '<span class="no-underline text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full ml-1 uppercase font-black">Inactivo</span>'}</p>
+          <p class="text-[11px] text-slate-400 truncate">${sub}</p></div>
+        <button onclick="${onclick}" class="text-[var(--primary)] font-black text-[10px] uppercase shrink-0">Editar</button></div>`;
+    }
+
+    function pintarBoxes() {
+      const act = PANEL.boxes.filter(b => b.active).length;
+      document.getElementById('sub-boxes').innerText = PANEL.boxes.length ? act + ' activo' + (act === 1 ? '' : 's') + ' de ' + PANEL.boxes.length : 'Aún no tienes boxes';
+      document.getElementById('lista-boxes').innerHTML = PANEL.boxes.length
+        ? PANEL.boxes.map((b, i) => filaItem(esc(b.name), esc(b.calendarId) + ' · ' + pesos(b.pricePerSession) + ' por sesión', b.active, `formBox(${i})`)).join('')
+        : '<p class="text-xs text-slate-400 italic py-2">Aún no tienes boxes.</p>';
+    }
+
+    function pintarPacks() {
+      const act = PANEL.packs.filter(p => p.active).length;
+      document.getElementById('sub-packs').innerText = PANEL.packs.length ? act + ' a la venta de ' + PANEL.packs.length : 'Aún no ofreces packs';
+      document.getElementById('lista-packs').innerHTML = PANEL.packs.length
+        ? PANEL.packs.map((p, i) => filaItem(esc(p.name), p.sessions + ' sesiones · ' + pesos(p.price) + ' (' + pesos(Math.round(p.price / p.sessions)) + ' por sesión)', p.active, `formPack(${i})`)).join('')
+        : '<p class="text-xs text-slate-400 italic py-2">Aún no ofreces packs.</p>';
+    }
+
+    async function formBox(i) {
+      const b = (i !== undefined) ? PANEL.boxes[i] : null;
+      const { value: datos } = await Swal.fire({
+        title: b ? 'Editar box' : 'Nuevo box',
+        html: `<div class="text-left space-y-3">
+          <div><label class="lbl">Nombre</label><input id="fb-name" class="form-input" placeholder="Ej: Box 1" value="${escA(b ? b.name : '')}"></div>
+          <div><label class="lbl">ID del Google Calendar del box</label><input id="fb-cal" class="form-input" placeholder="xxxx@group.calendar.google.com" value="${escA(b ? b.calendarId : '')}">
+            <p class="text-[10px] text-slate-400 mt-1">Google Calendar → Configuración del calendario → "ID del calendario". Compártelo con permiso de edición a prenobooking@gmail.com.</p></div>
+          <div><label class="lbl">Precio por sesión ($)</label><input id="fb-price" type="number" min="0" class="form-input" value="${escA(b ? b.pricePerSession : 0)}"></div>
+          ${b ? `<label class="flex items-center gap-2 text-sm font-semibold text-slate-600"><input id="fb-active" type="checkbox" class="w-4 h-4" ${b.active ? 'checked' : ''}> Box activo</label>` : ''}
+        </div>`,
+        showCancelButton: true, confirmButtonText: 'Guardar', cancelButtonText: 'Cancelar', confirmButtonColor: '#0D9488', focusConfirm: false,
+        preConfirm: () => {
+          const name = document.getElementById('fb-name').value.trim(), calendarId = document.getElementById('fb-cal').value.trim();
+          if (!name) return Swal.showValidationMessage('El nombre es obligatorio');
+          if (!calendarId) return Swal.showValidationMessage('El ID del calendario es obligatorio');
+          return { name, calendarId, pricePerSession: Number(document.getElementById('fb-price').value || 0), active: b ? document.getElementById('fb-active').checked : true };
+        }
+      });
+      if (!datos) return;
+      llamar('guardarBoxCentro', [TOKEN, b ? b.id : null, datos], () => cargarPanel(() => { poblarFiltros(); Swal.fire({ icon: 'success', title: 'Guardado', timer: 1000, showConfirmButton: false }); }));
+    }
+
+    async function formPack(i) {
+      const p = (i !== undefined) ? PANEL.packs[i] : null;
+      const { value: datos } = await Swal.fire({
+        title: p ? 'Editar pack' : 'Nuevo pack',
+        html: `<div class="text-left space-y-3">
+          <div><label class="lbl">Nombre</label><input id="fp-name" class="form-input" placeholder="Ej: Pack 10 sesiones" value="${escA(p ? p.name : '')}"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="lbl">Sesiones</label><input id="fp-ses" type="number" min="1" class="form-input" value="${escA(p ? p.sessions : 10)}"></div>
+            <div><label class="lbl">Precio total ($)</label><input id="fp-price" type="number" min="1" class="form-input" value="${escA(p ? p.price : '')}"></div>
+          </div>
+          ${p ? `<label class="flex items-center gap-2 text-sm font-semibold text-slate-600"><input id="fp-active" type="checkbox" class="w-4 h-4" ${p.active ? 'checked' : ''}> Pack a la venta</label>
+                 <p class="text-[10px] text-slate-400">Los cambios aplican a compras nuevas: los packs ya comprados conservan sus condiciones.</p>` : ''}
+        </div>`,
+        showCancelButton: true, confirmButtonText: 'Guardar', cancelButtonText: 'Cancelar', confirmButtonColor: '#0D9488', focusConfirm: false,
+        preConfirm: () => {
+          const name = document.getElementById('fp-name').value.trim();
+          const sessions = Number(document.getElementById('fp-ses').value), price = Number(document.getElementById('fp-price').value);
+          if (!name) return Swal.showValidationMessage('El nombre es obligatorio');
+          if (!(sessions >= 1)) return Swal.showValidationMessage('Debe tener al menos 1 sesión');
+          if (!(price > 0)) return Swal.showValidationMessage('El precio debe ser mayor a 0');
+          return { name, sessions, price, active: p ? document.getElementById('fp-active').checked : true };
+        }
+      });
+      if (!datos) return;
+      llamar('guardarPackCentro', [TOKEN, p ? p.id : null, datos], () => cargarPanel(() => Swal.fire({ icon: 'success', title: 'Guardado', timer: 1000, showConfirmButton: false })));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+      if (TOKEN) cargarPanel(() => { cargarMes(false); cargarSolicitudesSala(true); });
+    });
+  </script>
+  <script>
+    // ============================================================
+    // 💳 MI PLAN Y AVISO DE SUSPENSIÓN (19_Suscripciones.js)
+    // ============================================================
+    const planE_ = t => esc(t), planA_ = t => escA(t), planPesos_ = n => pesos(n);
+    // ---------- Estado y textos de "Mi plan" (compartido entre el panel del especialista y el del centro) ----------
+    const ESTADO_PLAN_UI = {
+      sin_cobro:      ['Sin cobro activo', 'bg-slate-100 text-slate-500'],
+      prueba:         ['Prueba gratuita', 'bg-sky-50 text-sky-700'],
+      activo:         ['Al día', 'bg-emerald-50 text-emerald-700'],
+      pago_pendiente: ['Pago pendiente', 'bg-amber-50 text-amber-700'],
+      suspendido:     ['Suspendido', 'bg-red-50 text-red-700'],
+      cancelado:      ['Dado de baja', 'bg-slate-200 text-slate-600']
+    };
+    // Los id de cobro entran en un onclick: solo caracteres que no pueden salirse del texto.
+    const ID_PLAN_SEGURO_ = /^[A-Za-z0-9_+\-]+$/;
+    const URL_TERMINOS_ = 'https://prenobooking.github.io/terminos.html';
+    function fechaPlan_(iso) { return iso ? new Date(iso).toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' }) : ''; }
+    function enlaceHttps_(url) { return /^https:\/\//i.test(String(url || '')) ? url : ''; }
+
+    // Aviso fijo arriba del panel cuando la cuenta está suspendida o con un pago pendiente.
+    function htmlBannerPlan_(estado, heredado, esCentro) {
+      let titulo, texto, clase;
+      if (estado === 'suspendido' || estado === 'cancelado') {
+        const baja = estado === 'cancelado';
+        titulo = baja ? 'Tu cuenta fue dada de baja' : 'Tu cuenta está suspendida';
+        if (heredado) {
+          texto = 'El plan de tu equipo está ' + (baja ? 'dado de baja' : 'suspendido por falta de pago') + ', así que los pacientes no pueden reservar contigo. Avisa al responsable del equipo. Tus citas ya agendadas no se ven afectadas.';
+        } else {
+          texto = (esCentro ? 'Mientras siga así, los pacientes no pueden reservar en tus boxes' : 'Mientras siga así, los pacientes no pueden reservar contigo') +
+                  (baja ? '.' : ' hasta que regularices el pago.') + ' Tus citas ya agendadas no se ven afectadas.';
+        }
+        clase = 'bg-red-50 border-red-200 text-red-700';
+      } else if (estado === 'pago_pendiente') {
+        titulo = 'Tienes un pago pendiente';
+        texto = heredado ? 'Tu equipo tiene un pago pendiente. Avisa al responsable para evitar que se suspenda.' : 'Págalo antes de que venza el plazo para evitar que tu cuenta se suspenda.';
+        clase = 'bg-amber-50 border-amber-200 text-amber-800';
+      } else { return ''; }
+      return `<div class="border rounded-2xl p-4 text-sm ${clase}"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div><p class="font-black">${titulo}</p><p class="mt-1">${planE_(texto)}</p></div>
+          <button onclick="irAMiPlan_()" class="shrink-0 bg-white/70 border border-current rounded-xl px-4 py-2 font-black text-xs uppercase">Ver mi plan</button></div></div>`;
+    }
+
+    function htmlCobroPendiente_(c, d) {
+      const idOk = ID_PLAN_SEGURO_.test(String(c.id));
+      const url = enlaceHttps_(c.paymentUrl);
+      const esAlta = c.tipo === 'alta';
+      const plazo = esAlta
+        ? 'La cuenta de la persona se crea apenas se confirme el pago.'
+        : (d.estado === 'suspendido'
+            ? 'Tu cuenta está suspendida hasta que pagues este cobro.'
+            : 'Paga antes del <b>' + planE_(fechaPlan_(c.venceGracia)) + '</b> para evitar la suspensión.');
+      const botones = [];
+      if (url) botones.push(`<a href="${planA_(url)}" target="_blank" rel="noopener" class="bg-[var(--primary)] text-[var(--primary-text)] px-5 py-2.5 rounded-xl font-bold text-sm">Pagar ahora</a>`);
+      if (c.linkVencido && !esAlta && idOk) botones.push(`<button onclick="planPedirLink('${c.id}')" class="bg-[var(--primary)] text-[var(--primary-text)] px-5 py-2.5 rounded-xl font-bold text-sm">Pedir link nuevo</button>`);
+      if (idOk) botones.push(`<button onclick="planVerificar('${c.id}')" class="bg-slate-50 text-slate-600 px-5 py-2.5 rounded-xl font-bold text-sm">Ya pagué</button>`);
+      return `<div class="bg-white p-5 sm:p-6 rounded-3xl border-2 border-amber-200 shadow-sm">
+          <div class="flex justify-between items-start gap-3"><div class="min-w-0">
+            <p class="font-black text-slate-900">${esAlta ? 'Cupo adicional pendiente de pago' : 'Cobro pendiente'}</p>
+            <p class="text-xs text-slate-400 mt-0.5">${planE_(c.detalle)}</p></div>
+            <div class="text-right shrink-0"><p class="font-black text-xl text-slate-800">${planPesos_(c.monto)}</p>${c.iva > 0 ? `<p class="text-[10px] text-slate-400">neto ${planPesos_(c.neto)} + IVA ${planPesos_(c.iva)}</p>` : ''}</div></div>
+          <p class="text-sm text-slate-600 mt-3">${plazo}</p>
+          ${(c.linkVencido && !esAlta) ? '<p class="text-xs text-amber-700 font-bold mt-2">El link de pago venció: pide uno nuevo.</p>' : ''}
+          <div class="flex flex-wrap gap-2 mt-4">${botones.join('')}</div></div>`;
+    }
+
+    function htmlMiPlan_(d) {
+      const [txtEstado, claseEstado] = ESTADO_PLAN_UI[d.estado] || ESTADO_PLAN_UI.sin_cobro;
+      const iva = d.preciosIncluyenIva ? ' (IVA incluido)' : ' + IVA';
+      let cuerpo;
+      if (d.esPlataforma) {
+        cuerpo = '<p class="text-sm text-slate-500">Esta es la cuenta de la plataforma: no tiene cobros.</p>';
+      } else if (d.heredado) {
+        cuerpo = `<p class="text-sm text-slate-600">Tu plan lo administra <b>${planE_(d.responsableNombre || 'el responsable de tu equipo')}</b>: esa persona recibe y paga los cobros del equipo. Si necesitas algo sobre el plan, habla directamente con ella.</p>`;
+      } else if (d.estado === 'sin_cobro') {
+        cuerpo = d.cortesia ? '<p class="text-sm text-slate-600"><b>Tu cuenta es gratis de forma permanente.</b> No tienes pagos pendientes ni cobros futuros.</p>' : '<p class="text-sm text-slate-600">Tu cuenta no tiene un cobro activo por ahora: no tienes pagos pendientes.</p>';
+      } else {
+        const filas = [];
+        if (d.estado === 'prueba') filas.push(['Prueba gratuita hasta', fechaPlan_(d.pruebaHasta)]);
+        // Con un cobro pendiente o suspendida, la fecha que importa es la del cobro (más abajo), no un "próximo cobro".
+        if (d.proximoCobro && (d.estado === 'activo' || d.estado === 'prueba')) filas.push([d.estado === 'prueba' ? 'Primer cobro' : 'Próximo cobro', fechaPlan_(d.proximoCobro)]);
+        if (d.mensual) { filas.push(['Mensualidad', d.mensual.iva !== undefined ? planPesos_(d.mensual.monto) + ' (neto ' + planPesos_(d.mensual.neto) + ' + IVA ' + planPesos_(d.mensual.iva) + ')' : planPesos_(d.mensual.monto) + iva]); filas.push(['Detalle', d.mensual.detalle]); }
+        if (d.cortesia) filas.push(['Tu cuenta', 'Gratis permanente (cuenta de cortesía)']);
+        if (d.mesesGratisFechas && d.mesesGratisFechas.length) filas.push(['Meses gratis que te quedan', 'Sin cobro el ciclo que parte el ' + d.mesesGratisFechas.map(fechaPlan_).join(', el ')]);
+        if (d.fundador) filas.push(['Socio fundador', d.tarifaCongeladaHasta ? 'Tarifa congelada hasta el ' + fechaPlan_(d.tarifaCongeladaHasta) : 'Sí']);
+        cuerpo = '<dl class="divide-y divide-slate-100">' + filas.map(f => `<div class="flex justify-between gap-4 py-2.5 text-sm"><dt class="text-slate-400 font-bold">${planE_(f[0])}</dt><dd class="font-bold text-slate-800 text-right">${planE_(f[1])}</dd></div>`).join('') + '</dl>';
+      }
+      let html = `<div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-start gap-3 mb-3"><div><p class="text-[10px] font-black uppercase text-slate-400">Tu plan</p>
+          <p class="text-2xl font-black text-slate-900">${planE_(d.planNombre)}</p></div>
+          <span class="text-[10px] font-black uppercase px-3 py-1 rounded-full whitespace-nowrap ${claseEstado}">${txtEstado}</span></div>${cuerpo}</div>`;
+      if (d.equipo) {
+        const n = d.equipo.miembros, s = n === 1 ? '' : 's';
+        html += `<div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm"><p class="font-black text-slate-900 mb-1">Tu equipo</p>
+          <p class="text-sm text-slate-600"><b>${n}</b> especialista${s} activo${s} · el plan incluye ${d.equipo.cuposIncluidos} cupos · ${planPesos_(d.equipo.precioUnitario)} por especialista${iva}.</p>
+          <p class="text-xs text-slate-400 mt-2">Para sumar a una persona más, enrólala en Mi equipo: se genera un pago proporcional a lo que queda del mes y su cuenta se crea apenas se confirme. Desde el mes siguiente se cobra según los especialistas activos.</p></div>`;
+      }
+      const cobros = d.cobros || [];
+      cobros.filter(c => c.estado === 'pendiente').sort((a, b) => (a.tipo === 'mensual' ? 0 : 1) - (b.tipo === 'mensual' ? 0 : 1))
+        .forEach(c => { html += htmlCobroPendiente_(c, d); });
+      const historial = cobros.filter(c => c.estado !== 'pendiente');
+      if (historial.length) {
+        html += `<div class="bg-white rounded-3xl border border-slate-200 shadow-sm px-5 sm:px-6"><p class="font-black text-slate-900 pt-5 pb-2">Historial de cobros</p>` +
+          historial.map(c => { const pagado = c.estado === 'pagado';
+            return `<div class="flex items-center justify-between gap-3 py-3 border-t border-slate-100"><div class="min-w-0"><p class="text-sm font-bold text-slate-800 truncate">${planE_(c.detalle)}</p>
+              <p class="text-xs text-slate-400">${planE_(fechaPlan_(c.pagadoAt || c.createdAt))}</p></div>
+              <div class="text-right shrink-0"><p class="text-sm font-black text-slate-800">${planPesos_(c.monto)}</p>
+              <span class="text-[10px] font-black uppercase ${pagado ? 'text-emerald-600' : 'text-slate-400'}">${pagado ? 'Pagado' : 'Vencido'}</span></div></div>`; }).join('') + '</div>';
+      }
+      html += `<p class="text-[11px] text-slate-400 text-center pt-1">Condiciones de cobro, suspensión y baja: <a href="${URL_TERMINOS_}" target="_blank" rel="noopener" class="underline hover:text-slate-600">Términos del Servicio</a></p>`;
+      return html;
+    }
+
+
+    function irAMiPlan_() { showTab('plan'); }
+
+    function pintarBannerPlan_(estado) {
+      const b = document.getElementById('banner-plan'); if (!b) return;
+      const h = htmlBannerPlan_(estado, false, true);
+      b.innerHTML = h; b.classList.toggle('hidden', !h);
+    }
+
+    function cargarPlan() {
+      const cont = document.getElementById('plan-contenido');
+      cont.innerHTML = '<p class="text-sm text-slate-400">Cargando...</p>';
+      llamar('obtenerMiPlanCentro', [TOKEN], res => {
+        cont.innerHTML = htmlMiPlan_(res);
+        pintarBannerPlan_(res.estado);   // si acaba de pagar, el aviso desaparece
+      });
+    }
+
+    function planVerificar(id) {
+      Swal.fire({ title: 'Revisando el pago...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      llamar('verificarPagoMiPlanCentro', [TOKEN, id], res => {
+        if (res.estado === 'pagado') Swal.fire({ icon: 'success', title: '¡Pago confirmado!', timer: 1600, showConfirmButton: false });
+        else Swal.fire('Aún no se confirma', 'Khipu todavía no informa el pago. Si ya pagaste, puede tardar unos minutos: se actualizará solo.', 'info');
+        cargarPlan();
+      });
+    }
+
+    function planPedirLink(id) {
+      Swal.fire({ title: 'Generando un link nuevo...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      llamar('regenerarLinkMiPlanCentro', [TOKEN, id], res => {
+        if (res.estado === 'pagado') { Swal.fire({ icon: 'success', title: '¡Ese cobro ya estaba pagado!', timer: 1600, showConfirmButton: false }); return cargarPlan(); }
+        const url = enlaceHttps_(res.paymentUrl);
+        Swal.fire({ icon: 'info', title: 'Link de pago listo',
+          html: `<p class="text-sm text-slate-600 mb-4">Paga en Khipu. Cuando se confirme, tu cuenta queda al día.</p>
+                 ${url ? `<a href="${escA(url)}" target="_blank" rel="noopener" class="inline-block bg-[var(--primary)] text-white px-6 py-3 rounded-xl font-bold">Ir a pagar</a>` : ''}`,
+          showConfirmButton: false, showCloseButton: true });
+        cargarPlan();
+      });
+    }
+  </script>
+</body>
+</html>
