@@ -56,7 +56,7 @@
     .btn.primario{background:var(--verde);color:#fff} .btn.primario:hover{background:#0B5F59}
     .btn.borde{border-color:var(--pino);color:var(--pino);background:transparent} .btn.borde:hover{background:var(--pino);color:#fff}
     .btn.chico{padding:8px 14px;font-size:13px}
-    @media (max-width:760px){.menu{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;margin:0 -6px;padding-bottom:2px} .menu a{white-space:nowrap}}
+    @media (max-width:760px){.top .wrap{gap:6px 12px;padding-top:7px;padding-bottom:4px} .menu{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;margin:0 -8px;scrollbar-width:none} .menu::-webkit-scrollbar{display:none} .menu a{white-space:nowrap;padding:6px 10px}}
 
     /* Hero */
     .hero{padding:36px 0 24px}
@@ -157,6 +157,7 @@
     .escalon .p{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;color:var(--pino);letter-spacing:-.02em;grid-row:1/3;grid-column:2;text-align:right;line-height:1.1}
     .escalon .p small{display:block;font-size:11.5px;font-weight:400;color:var(--suave);letter-spacing:0}
     .escalon .nom{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:var(--pino);letter-spacing:-.02em}
+    .escalon .nom em{font-style:normal;font-family:Inter,sans-serif;font-weight:600;font-size:11px;letter-spacing:.02em;color:var(--verde);background:var(--bruma);border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
     .cierre{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .cierre p{color:var(--suave);font-size:13px}
     @media (max-width:760px){.escalon{margin-left:calc(var(--i) * 3%);grid-template-columns:minmax(0,1fr)} .escalon .p{grid-row:auto;grid-column:auto;text-align:left;margin-top:6px}}
@@ -178,12 +179,12 @@
       .cta.ver{transform:none}
       .cta p{flex:1;font-size:12.5px;line-height:1.3;color:#D6E7E3} .cta p b{display:block;color:#fff;font-size:13.5px}
       .cta .btn{background:var(--lima);color:var(--pino);padding:9px 14px;font-size:13px;white-space:nowrap;border:0}
-      .cta button.x{all:unset;cursor:pointer;color:#9DB8B3;font-size:20px;line-height:1;padding:4px 6px}
+      .cta button.x{all:unset;cursor:pointer;color:#9DB8B3;font-size:22px;line-height:1;width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin:-6px -4px -6px 0}
       body{padding-bottom:70px}
     }
     footer{background:var(--pino);color:#B7CFCA;padding:26px 0;font-size:13px}
     footer .wrap{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap}
-    footer a{color:#fff}
+    footer a{color:#fff;display:inline-block;padding:7px 2px}
     @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .puerta{animation:none} .btn,.cta{transition:none}}
   </style>
 </head>
@@ -274,10 +275,10 @@
       <div class="wrap">
         <div class="titulo"><h2 id="t-planes">Si eres profesional, crece a tu ritmo</h2><p>Empiezas con lo básico y subes de escalón cuando tu consulta lo pide. Los primeros 14 días de Esencial y Profesional son gratis.</p></div>
         <div class="escalera">
-          <a class="escalon" href="planes.html#plan-esencial" style="--i:0;--c:#99F6E4"><span class="nom">Primeros pasos</span><span class="q">Agenda online y cobro de cada sesión.</span><span class="p"><span id="h-esencial">$14.900</span><small>+ IVA al mes</small></span></a>
-          <a class="escalon" href="planes.html#plan-profesional" style="--i:1;--c:#2DD4BF"><span class="nom">Consulta propia</span><span class="q">Ficha clínica, métricas y boleta de honorarios.</span><span class="p"><span id="h-profesional">$24.900</span><small>+ IVA al mes</small></span></a>
-          <a class="escalon" href="planes.html#plan-equipo" style="--i:2;--c:#0D9488"><span class="nom">Equipo</span><span class="q">Una cuenta para administrar a todo tu equipo.</span><span class="p">$19.900<small>+ IVA por especialista (mínimo 3)</small></span></a>
-          <a class="escalon" href="planes.html#plan-espacio" style="--i:3;--c:#0F766E"><span class="nom">Centro</span><span class="q">Salas, packs y cobro por uso para tu centro.</span><span class="p">$29.900<small>+ IVA al mes, con 4 salas</small></span></a>
+          <a class="escalon" href="planes.html#plan-esencial" style="--i:0;--c:#99F6E4"><span class="nom">Primeros pasos<em>Plan Esencial</em></span><span class="q">Agenda online y cobro de cada sesión.</span><span class="p"><span id="h-esencial">$14.900</span><small>+ IVA al mes</small></span></a>
+          <a class="escalon" href="planes.html#plan-profesional" style="--i:1;--c:#2DD4BF"><span class="nom">Consulta propia<em>Plan Profesional</em></span><span class="q">Ficha clínica, métricas y boleta de honorarios.</span><span class="p"><span id="h-profesional">$24.900</span><small>+ IVA al mes</small></span></a>
+          <a class="escalon" href="planes.html#plan-equipo" style="--i:2;--c:#0D9488"><span class="nom">Equipo<em>Plan Equipo</em></span><span class="q">Una cuenta para administrar a todo tu equipo.</span><span class="p">$19.900<small>+ IVA por especialista (mínimo 3)</small></span></a>
+          <a class="escalon" href="planes.html#plan-espacio" style="--i:3;--c:#0F766E"><span class="nom">Centro<em>Plan Espacio</em></span><span class="q">Salas, packs y cobro por uso para tu centro.</span><span class="p">$29.900<small>+ IVA al mes, con 4 salas</small></span></a>
         </div>
         <div class="cierre">
           <a class="btn primario" href="registro.html">Crear mi cuenta</a>
@@ -309,7 +310,7 @@
   <footer>
     <div class="wrap">
       <span>© PrenoBooking · Chile</span>
-      <span><a href="terminos.html">Términos del Servicio</a> · <a href="privacidad.html">Política de Privacidad</a> · <a href="mailto:soporte@prenobooking.cl">soporte@prenobooking.cl</a> · <a href="https://prenobooking.github.io/admin">Iniciar sesión</a></span>
+      <span><a href="terminos.html">Términos del Servicio</a> · <a href="privacidad.html">Política de Privacidad</a> · <a href="mailto:prenobooking@gmail.com">prenobooking@gmail.com</a> · <a href="https://prenobooking.github.io/admin">Iniciar sesión</a></span>
     </div>
   </footer>
 
@@ -461,7 +462,7 @@
     }).catch(function () {
       if (estado.cargado) return;
       $("esp-vacio-t").textContent = "No pudimos cargar a los especialistas";
-      $("esp-vacio-p").textContent = "Revisa tu conexión y recarga la página. Si sigue igual, escríbenos a soporte@prenobooking.cl.";
+      $("esp-vacio-p").textContent = "Revisa tu conexión y recarga la página. Si sigue igual, escríbenos a prenobooking@gmail.com.";
       $("esp-vacio").querySelector("a").hidden = true; $("esp-vacio").hidden = false;
     });
     (P.cfg || Promise.reject()).then(function (c) {
