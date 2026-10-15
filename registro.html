@@ -21,9 +21,9 @@
   (function () {
     var BASE_APP_URL = "https://script.google.com/macros/s/AKfycbx9oRT6Qz9Z3KxioGS1J4cQ0Cy5Rn6PBe95piMO1UPSOgh4lgtyMk0QIZwmjES9z5lU/exec";
     var q = new URLSearchParams(window.location.search);
-    var sid = q.get("sid") || "", verificar = q.get("verificar") || "", plan = q.get("plan") || "";
+    var sid = q.get("solicitud") || q.get("sid") || "", verificar = q.get("verificar") || "", plan = q.get("plan") || "";
     var partes = ["view=registro"];
-    if (/^sol-\d{10,15}-[a-f0-9]{6}$/.test(sid)) partes.push("sid=" + encodeURIComponent(sid));
+    if (/^sol-\d{10,15}-[a-f0-9]{6}$/.test(sid)) partes.push("solicitud=" + encodeURIComponent(sid));
     if (/^[a-f0-9]{32,80}$/.test(verificar)) partes.push("verificar=" + encodeURIComponent(verificar));
     if (plan === "esencial" || plan === "profesional") partes.push("plan=" + plan);
     var f = document.createElement("iframe");
