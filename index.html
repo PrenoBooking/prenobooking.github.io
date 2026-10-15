@@ -139,6 +139,10 @@
     .vacio .btn{margin-top:12px}
 
     /* Nosotros */
+    .testimonios{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
+    .testimonio{background:var(--blanco);border:1px solid var(--linea);border-radius:14px;padding:18px;margin:0;display:flex;flex-direction:column;gap:12px}
+    .testimonio blockquote{margin:0;font-size:15px;line-height:1.55;color:var(--tinta)}
+    .testimonio figcaption{font-size:13px;color:var(--suave)} .testimonio figcaption strong{display:block;color:var(--pino);font-size:14px}
     .nosotros{background:var(--pino);color:#D6E7E3}
     .nosotros h2,.nosotros h3{color:#fff}
     .nosotros .cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:40px}
@@ -255,6 +259,13 @@
       </div>
     </section>
 
+    <section class="bloque" id="testimonios" aria-labelledby="t-test" style="padding-top:12px" hidden>
+      <div class="wrap">
+        <div class="titulo"><h2 id="t-test">Lo que dicen quienes ya atienden con PrenoBooking</h2></div>
+        <div class="testimonios" id="test-lista"></div>
+      </div>
+    </section>
+
     <section class="bloque nosotros" id="nosotros" aria-labelledby="t-nos">
       <div class="wrap">
         <div class="cols">
@@ -326,6 +337,9 @@
       { id: "Integrativa", nombre: "Integrativa", desc: "Combina enfoques según lo que necesite cada persona." }
     ];
     var NOMBRE = {}; TERAPIAS.forEach(function (t) { NOMBRE[t.id] = t.nombre; });
+    // Testimonios: agrega aquí solo opiniones REALES y con permiso escrito de cada persona. Mientras la lista esté vacía, la sección no se muestra.
+    // Formato: { texto: "…", nombre: "Nombre Apellido", rol: "Psicóloga, Santiago" }
+    var TESTIMONIOS = [];
     var estado = { lista: [], conteos: {}, terapia: "", modalidad: "", cargado: false };
     var $ = function (id) { return document.getElementById(id); };
     function el(tag, clase, texto) { var e = document.createElement(tag); if (clase) e.className = clase; if (texto !== undefined) e.textContent = texto; return e; }
@@ -469,6 +483,17 @@
       if (!c || c.ok !== true || !Array.isArray(c.planes)) return;
       guardar("pb_cfg", c); aplicarCfg(c);
     }).catch(function () {});
+    (function pintarTestimonios() {
+      if (!TESTIMONIOS.length) return;
+      var cont = $("test-lista"); cont.textContent = "";
+      TESTIMONIOS.forEach(function (t) {
+        var fig = el("figure", "testimonio");
+        var q = el("blockquote", "", "“" + t.texto + "”");
+        var cap = el("figcaption"); cap.appendChild(el("strong", "", t.nombre)); if (t.rol) cap.appendChild(document.createTextNode(t.rol));
+        fig.appendChild(q); fig.appendChild(cap); cont.appendChild(fig);
+      });
+      $("testimonios").hidden = false;
+    })();
   })();
 </script>
 </body>
