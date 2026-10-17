@@ -25,7 +25,7 @@
     var partes = ["view=registro"];
     if (/^sol-\d{10,15}-[a-f0-9]{6}$/.test(sid)) partes.push("solicitud=" + encodeURIComponent(sid));
     if (/^[a-f0-9]{32,80}$/.test(verificar)) partes.push("verificar=" + encodeURIComponent(verificar));
-    if (plan === "esencial" || plan === "profesional") partes.push("plan=" + plan);
+    if (plan === "esencial" || plan === "profesional" || plan === "equipo" || plan === "espacio") partes.push("plan=" + plan);
     var f = document.createElement("iframe");
     f.src = BASE_APP_URL + "?" + partes.join("&");
     f.title = "Formulario de registro de PrenoBooking";
